@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/my/my",
+    "pages/auth/auth",
+    "pages/addEntry/addEntry",
+    "pages/entryDetail/entryDetail",
+    "pages/bindPhoneNum/bindPhoneNum"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#000000",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "",
+    "backgroundColor": "#eeeeee",
+    "backgroundTextStyle": "light",
+    "navigationStyle": "default"
+  },
+  "tabBar": {
+    "color": "#757575",
+    "selectedColor": "#2196F3",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/new.png",
+        "selectedIconPath": "images/new_selected.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me_selected.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": false,
+  "sitemapLocation": "sitemap.json"
+}

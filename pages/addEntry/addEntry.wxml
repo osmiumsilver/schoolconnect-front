@@ -1,0 +1,40 @@
+<!--addEntry.wxml-->
+<view class="add-content">
+	<view class="sel-input">
+		<view class="item-flex">
+			<text>申请人:</text>
+			<input value="{{ applicantName }}" title="申请人" bindinput='getApplicantName' type="text" placeholder="输入申请人姓名" />
+		</view>
+		<view class="item-flex">
+			<text>联系电话:</text>
+			<input value="{{ mobile }}" title="联系电话" bindinput='getMobile' type="number" placeholder="输入联系电话" />
+		</view>
+		<view class="item-flex">
+			<text>故障地点:</text>
+			<input value="{{ address }}" title="故障地点" bindinput='getAddress' type="text" placeholder="输入故障地点" />
+		</view>
+	</view>
+	<view class="m-item">
+		<view>问题描述:<text class="tip-text">(必填) </text></view>
+	</view>
+	<view>
+		<textarea class="item-ta" value="{{ description }}" bindinput='getDescription' type="text" placeholder="输入问题描述"> </textarea>
+	</view>
+	<view class="m-item">
+		<view>问题图片:<text class="tip-text"> </text></view>
+	</view>
+	<view class="section">
+		<view class='img'>
+		</view>
+		<view class="weui-uploader__files" id="uploaderFiles">
+			<block wx:for="{{src}}" wx:for-index="index" wx:key="unique">
+				<image class="weui-uploader__image" bindlongpress="deleteImage" src='{{item}}' data-index='{{index}}'>
+				</image>
+			</block>
+		</view>
+		<view class="addView-border" bindtap='addImage'>
+			<image class="addView" src='../../images/camera.png'></image>
+		</view>
+	</view>
+	<button class="m-btn" hover-class='m-btn-hover' bindtap="handleClick" disabled='{{disabled}}' loading="{{loading}}" type="success">提交</button>
+</view>
