@@ -1,5 +1,6 @@
 <script>
     import Vue from 'vue'
+import { login, rootUrl,wechatLogin } from './utils/util';
     export default {
         onLaunch: function() {
             console.log('App Launch')
@@ -34,6 +35,8 @@
                 }
             })
             // #endif
+			
+wechatLogin();
             // this.globalData = {
             //     thisDay: this.getDay(),
             //     yearArray: this.getYearArray(),

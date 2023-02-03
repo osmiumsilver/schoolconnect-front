@@ -105,6 +105,7 @@
     import cuCarousel from "../../components/cu-carousel/cu-carousel.vue"
     import {login} from "@/utils/util.js"
 	import rootUrl from "@/utils/util.js"
+import { wechatLogin } from "../../utils/util"
     export default {
         name: "home",
         data() {
@@ -148,11 +149,13 @@
                 
                 if (required) { //required为true表明需要登录
 
-                    if (!uni.getStorageSync("user_info")) {
+                    if (!uni.getStorageSync("openid")) {
 						uni.showModal({
 							content: '您还未登录，点击确定进行登录',
 							showCancel: false,
-							complete: (res) => {}
+							complete: (res) => {
+								wechatLogin();
+							}
 						});
 			}			
 						
