@@ -10,7 +10,7 @@
             "style" : {}
         },
         {
-            "path" : "pages/course/course",
+            "path" : "pages/home/course/course",
             "style" : {}
         },
         {
@@ -18,7 +18,7 @@
             "style" : {}
         },
         {
-            "path" : "pages/login/login",
+            "path" : "pages/bind/bind",
             "style" : {}
         },
         {
@@ -65,7 +65,7 @@
             "path" : "pages/home/classroom/classroom",
             "style" : {}
         },{
-            "path" : "pages/course/addcourse/addcourse",
+            "path" : "pages/home/course/addcourse/addcourse",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

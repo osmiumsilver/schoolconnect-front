@@ -134,21 +134,21 @@
                         if (res.confirm) {
                             uni.clearStorageSync()
                             uni.navigateTo({
-                                url: "../login/login"
+                                url: "../bind/bind"
                             })
                         }
                     }
                 })
             },
-			gotoLogin()
-			{
-				uni.navigateTo({
-					url: '/pages/login/login',
-					success: res => {},
-					fail: () => {console.log(e)},
-					complete: () => {}
-				});
-			}
+            gotoLogin()
+            {
+                uni.navigateTo({
+                    url: '/pages/bind/bind',
+                    success: res => {},
+                    fail: () => {console.log(e)},
+                    complete: () => {}
+                });
+            }
         }
     }
 </script>
@@ -173,8 +173,8 @@
             width: 100vw;
             height: 350rpx;
             color: #fff;
-			margin-left: 50rpx;
-			margin-right: 50rpx;
+            margin-left: 50rpx;
+            margin-right: 50rpx;
             display: flex;
             flex-direction: row;
             // justify-content: center;
@@ -188,13 +188,13 @@
                 height: 150rpx;
                 // margin-left: 100rpx;
                 z-index: 10;
-				object-fit: cover;
-				flex-shrink: 0;
+                object-fit: cover;
+                flex-shrink: 0;
             }
 
             .info {
                 margin-left: 50rpx;
-				white-space:pre-wrap;
+                white-space:pre-wrap;
             }
         }
 

@@ -179,6 +179,34 @@
     import addTips from "@/components/add-tips/add-tips"
     import termPicker from '@/components/term-picker/term-picker'
     export default {
+        methods: {
+            dateMinus: function(whichDay) {
+                var sdate = new Date(whichDay);
+                var now = new Date();
+                var days = now.getTime() - sdate.getTime();
+                var day = parseInt(days / (1000 * 60 * 60 * 24));
+                return day;
+            },
+            getDay: function() {
+                var date = new Date();
+                switch (date.getDay()) {
+                    case 0:
+                        return 7;
+                    default:
+                        return date.getDay()
+                }
+            },
+            getYearArray: function() {
+                let year_array = []
+                let this_year = new Date().getFullYear()
+                for (let i = this_year - 3; i < this_year + 1; i++) {
+                    let temp_year = parseInt(i) + '-' + parseInt(i + 1)
+                    year_array.push(temp_year)
+                }
+                year_array.push('全部学年')
+                return year_array.reverse()
+            },
+        },
         data() {
             return {
                 yearArray: [],

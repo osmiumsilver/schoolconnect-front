@@ -76,9 +76,9 @@
         components: {
             termPicker
         },
-		mounted() {
-			this.getGrade()
-		},
+        mounted() {
+            this.getGrade()
+        },
         methods: {
             xqmClick(e) {
                 this.xqm = e

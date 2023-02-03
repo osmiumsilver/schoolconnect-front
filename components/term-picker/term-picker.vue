@@ -1,6 +1,6 @@
 <template>
     <view>
-		<!-- 默认学期设置组件 -->
+        <!-- 默认学期设置组件 -->
         <button v-if="pickerType==='default'" class="cu-btn bg-orange-1 shadow" @click="modalName = 'model'">
             {{ yearText }}@{{ termText }}
             <text class="cuIcon-right"></text>

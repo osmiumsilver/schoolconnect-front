@@ -15,9 +15,9 @@
                 <view class="cu-item flex-sub" :class="2==current?'blue-1 cur':''" @click="current = 2">
                     校园生活
                 </view>
-				<view class="cu-item flex-sub" :class="3==current?'blue-1 cur':''" @click="current = 3">
-				    教师电话
-				</view>
+                <view class="cu-item flex-sub" :class="3==current?'blue-1 cur':''" @click="current = 3">
+                    教师电话
+                </view>
             </view>
         </scroll-view>
         <view v-if='current == 0' class='margin-top-sm margin-bottom-sm'>

@@ -260,9 +260,9 @@ function parseAttrs(attrs) {
     var name = attr.name;
 
     if (pre[name]) {
-			pre[name] = pre[name] + " " + value;
+            pre[name] = pre[name] + " " + value;
     } else {
-			pre[name] = value;
+            pre[name] = value;
     }
 
     return pre;

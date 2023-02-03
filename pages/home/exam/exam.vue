@@ -72,7 +72,7 @@
             }
         },
         mounted() {
-			this.getExam()
+            this.getExam()
         },
         components: {
             termPicker,

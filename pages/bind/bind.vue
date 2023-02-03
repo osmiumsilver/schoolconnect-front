@@ -49,10 +49,7 @@
 </template>
 
 <script>
-    import {
-        req,
-        rootUrl
-    } from '../../utils/util.js'
+    import {req,rootUrl} from '../../utils/util.js'
     export default {
         data() {
             return {
@@ -116,7 +113,7 @@
                             } else {
                                 uni.showModal({
                                     content: "请允许获得您的公开信息",
-                                    showCancel: false
+                                    showCancel: true
                                 })
                             }
                         },

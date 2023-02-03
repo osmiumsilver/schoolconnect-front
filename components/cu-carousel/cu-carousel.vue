@@ -1,5 +1,5 @@
 <template>
-	</swiper>
+    </swiper>
     <view>
         <swiper class="cu-swiper" indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" circular @change="swiperChange">
             <swiper-item class="swiper-item" v-for="(item, index) in imgList" :key="index" @click="clickImg(item)">
@@ -19,11 +19,11 @@
         data() {
             return {
                 // currentIndex: 0,
-			   background: ['color1', 'color2', 'color3'],
-				indicatorDots: true,
-				autoplay: true,
-				interval: 4000,
-				duration: 500
+               background: ['color1', 'color2', 'color3'],
+                indicatorDots: true,
+                autoplay: true,
+                interval: 4000,
+                duration: 500
             };
         },
         props: {

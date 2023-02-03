@@ -74,13 +74,13 @@ export const rgb2hsv = (r, g, b) => {
 }
 
 export const rgb2Hex = (r, g, b) => {
-	let o = (r << 16 | g << 8 | b).toString(16)
-	return o.length < 6 ? ("#".concat("0".repeat(6 - o.length)).concat(o)):"#".concat(o);
+    let o = (r << 16 | g << 8 | b).toString(16)
+    return o.length < 6 ? ("#".concat("0".repeat(6 - o.length)).concat(o)):"#".concat(o);
 }
 
 
 export default {
-	hsv2rgb,
-	rgb2hsv,
-	rgb2Hex
+    hsv2rgb,
+    rgb2hsv,
+    rgb2Hex
 }
