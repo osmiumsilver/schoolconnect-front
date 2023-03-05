@@ -1,0 +1,157 @@
+{
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/index/index",
+      "style": {}
+    },
+    {
+      "path": "pages/home/home",
+      "style": {}
+    },
+    {
+      "path": "pages/home/course/course",
+      "style": {}
+    },
+    {
+      "path": "pages/my/my",
+      "style": {}
+    },
+    {
+      "path": "pages/bind/bind",
+      "style": {}
+    },
+    {
+      "path": "pages/my/about/about",
+      "style": {}
+    },
+    {
+      "path": "pages/home/grade/grade",
+      "style": {}
+    },
+    {
+      "path": "pages/home/exam/exam",
+      "style": {}
+    },
+    {
+      "path": "pages/home/web/web",
+      "style": {}
+    },
+    {
+      "path": "pages/home/electric/electric",
+      "style": {}
+    },
+    {
+      "path": "pages/home/phone/phone",
+      "style": {}
+    },
+    // ,{
+    //     "path" : "pages/my/update/update",
+    //     "style" : {}
+    // },
+
+    {
+      "path": "pages/home/book/book",
+      "style": {}
+    },
+    {
+      "path": "pages/home/book/bookdetail/bookdetail",
+      "style": {}
+    },
+    {
+      "path": "pages/home/classroom/classroom",
+      "style": {}
+    },
+    {
+      "path": "pages/home/course/manage/manage",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/info/info",
+      "style": {
+        "navigationBarTitleText": "个人信息",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/info/info_review/info_review",
+      "style": {
+        "navigationBarTitleText": "信息审核",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/messageboard/messageboard",
+      "style": {
+        "navigationBarTitleText": "信息公告板",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/messageboard/messageboard_detail",
+      "style": {
+        "navigationBarTitleText": "详细",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/messageboard/messageboard_publish",
+      "style": {
+        "navigationBarTitleText": "发布公告",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },    {
+      "path": "pages/home/grade/grade_review/grade_review",
+      "style": {
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },    {
+      "path": "pages/home/grade/grade_teacher/grade_teacher",
+      "style": {
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "校园服务台",
+    "navigationBarBackgroundColor": "#1798d9",
+    "backgroundColor": "#F8F8F8"
+  },
+  "easycom": {
+    "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+  },
+  "condition": {
+    //模式配置，仅开发期间生效
+    "current": 0,
+    //当前激活模式(list 的索引项)
+    "list": [
+      {
+        "name": "",
+        //模式名称
+        "path": "",
+        //启动页面，必选
+        "query": ""
+        //启动参数，在页面的onLoad函数里面得到
+      }
+    ]
+  }
+}
