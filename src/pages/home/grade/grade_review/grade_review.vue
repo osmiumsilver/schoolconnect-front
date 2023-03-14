@@ -1,15 +1,55 @@
 
 <template>
   <view>
-    <cu-custom bgColor="bg-blue-11" :isBack="true">
+    <cu-custom bgColor="bg-orange-1" :isBack="true">
       <view slot="backText">
         返回
       </view>
       <view slot="content">
-        学籍信息审核
+        成绩修改审核
       </view>
     </cu-custom>
+    <view class="head">
 
+      <view class="header-wrap">
+
+        <view class="index-header">
+
+          <text class="address" v-if="leftWords">{{leftWords}}</text>
+
+          <view class="input-wrap" v-if="input">
+
+            <input type="text"
+
+                   placeholder="请输入搜索"
+
+                   v-model="value"
+
+                   @change="inputChange"/>
+
+            <text class="iconfont iconfangdajing"></text>
+
+          </view>
+
+          <view class="map-wrap"
+
+                v-if="rightWords||rightIcon"
+
+                @click="rightClick">
+
+            <text class="iconfont" :class="rightIcon"></text>
+
+            <text>{{rightWords}}</text>
+
+          </view>
+
+        </view>
+
+      </view>
+
+      <view class="blank"></view>
+
+    </view>
     <!-- 主体展示页面 -->
     <view class="animation-slide-bottom margin list-container" v-if="reviewList.length">
       <view class="list-head bg-blue-1">
@@ -89,10 +129,11 @@ export default {
       }
       this.$reqs(":8081/grade/review", "GET", getData, res => {
 
-        if (res.code === "200") {
+        if (res.code == 200) {
           const itemLength = res.data.length
-          this.showButtons = true
+
           if (itemLength) {
+            this.showButtons = true
             this.reviewList = res.data
             this.choFlag = new Array(itemLength).fill(false)
             this.emptyType = "success"
@@ -114,7 +155,7 @@ export default {
 
       this.$reqs(':8081/user/info', 'GET', {userId: userId}
           , res => {
-            if (res.code === "200") {
+            if (res.code == 200) {
               let str = ''
               for (let i in res.data) {
                 str += res.data[i] + '\r\n'
@@ -163,7 +204,7 @@ export default {
         complete: (res) => {
           if (res.confirm) {
             this.$reqs(":8081/user/info/review", "PUT", postData, res => {
-              if (res.code === "200") {
+              if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',
                   mask: false,
@@ -186,5 +227,62 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$color-base: #00c16f;
+$words-color-base: #333333;
+$words-color-light: #999999;
+.header-wrap {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 999;
 
+  .index-header {
+    height: 88upx;
+    line-height: 88upx;
+    padding: 0 30upx;
+    padding-top: 40upx;
+    background-color: $color-base;
+    font-size: 28upx;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .address {
+      font-size: 26upx;
+    }
+
+    .input-wrap {
+      width: 500upx;
+      height: 70upx;
+      padding: 10upx 30upx 10upx 100upx;
+      box-sizing: border-box;
+      background-color: #fff;
+      border-radius: 50upx;
+      color: $words-color-base;
+      position: relative;
+
+      text {
+        position: absolute;
+        left: 40upx;
+        top: -8upx;
+        color: $words-color-light;
+        font-size: 30upx;
+      }
+    }
+
+    .map-wrap {
+      .iconfont {
+        font-size: 32upx;
+        margin-right: 5upx;
+      }
+      text {
+        font-size: 26upx;
+      }
+    }
+  }
+}
+.blank {
+  height: 126upx;
+}
 </style>

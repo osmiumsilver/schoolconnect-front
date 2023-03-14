@@ -1,6 +1,6 @@
 <template>
     <view>
-        <cu-custom bgColor="bg-blue-11" :isBack="true">
+        <cu-custom bgColor="bg-orange-1" :isBack="true">
             <view slot="backText">返回</view>
             <view slot="content">通讯电话</view>
         </cu-custom>
@@ -71,7 +71,7 @@
                     <text class="cuIcon-title text-orange"></text>选择学期
                 </view>
                 <view class="action">
-                    <term-picker @xnm="xnmClick" @xqm="xqmClick"></term-picker>
+                    <term-picker @xnm="chooseYear" @xqm="chooseSemester"></term-picker>
                 </view>
             </view>
             <view class="cu-bar search bg-white">
@@ -98,15 +98,15 @@
                     </view>
                     <view class="list-item text-black" v-for='(item, index) in teacherTelList' :key='index' :class="index%2?'bg-gray':'bg-white'">
                         <view class="list-subitem">
-                            <text class="text-bold">{{item.kcmc}}</text>
+                            <text class="text-bold">{{item.courseName}}</text>
                             <text></text>
                         </view>
                         <view class="list-subitem margin-top-sm">
                             <view class="flex-sub text-left">
-                                {{item.xm}}
+                                {{item.teacherName}}
                             </view>
                             <view class="flex-sub text-center">
-                                地点：{{item.cdmc}}
+                                地点：{{item.courseLocation}}
                             </view>
                             <view class="flex-sub text-right">
                                 <button class="cu-btn bg-orange-1 round shadow sm" @click="makeCall(item.jslxdh)">{{item.jslxdh}}</button>
@@ -223,10 +223,10 @@
             }
         },
         methods: {
-            xqmClick(e) {
+            chooseSemester(e) {
                 this.xqm = e
             },
-            xnmClick(e) {
+            chooseYear(e) {
                 this.xnm = e
             },
             makeCall(tel) {

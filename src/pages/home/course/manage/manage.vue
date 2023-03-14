@@ -11,15 +11,15 @@
         <view v-if="!showColorPicker">
             <view class="cu-form-group">
                 <view class="title">课程名称</view>
-                <input placeholder="输入课程名称" v-model="courseItem.kcmc"></input>
+                <input placeholder="输入课程名称" v-model="courseItem.courseName"></input>
             </view>
             <view class="cu-form-group">
                 <view class="title">地点</view>
-                <input placeholder="输入上课地点(可空)" v-model="courseItem.cdmc"></input>
+                <input placeholder="输入上课地点(可空)" v-model="courseItem.courseLocation"></input>
             </view>
             <view class="cu-form-group">
                 <view class="title">教师</view>
-                <input placeholder="输入课程教师姓名(可空)" v-model="courseItem.xm"></input>
+                <input placeholder="输入课程教师姓名(可空)" v-model="courseItem.teacherName"></input>
             </view>
         </view>
         <view v-if="showColorPicker" class="padding-sm bg-white" style="position: fixed;width: 100vw;">
@@ -52,7 +52,7 @@
                     <text class="text-black">周次</text>
                 </view>
                 <view class="action">
-                    <button class="cu-btn bg-green shadow" @click="modalName='ZcModal'">{{courseItem.zcdd}}</button>
+                    <button class="cu-btn bg-green shadow" @click="modalName='WeekSelectorModal'">{{courseItem.zcdd}}</button>
                 </view>
             </view>
             <view class="cu-item">
@@ -60,10 +60,10 @@
                     <text class="text-black">节次</text>
                 </view>
                 <view class="action">
-                    <picker mode="multiSelector" :range="jcList" :value="[courseItem.xqj,courseItem.jcs,courseItem.cxjs]"
+                    <picker mode="multiSelector" :range="jcList" :value="[courseItem.xqj,courseItem.startingPeriod,courseItem.lastingPeriods]"
                         @change="jcChange">
                         <button class="cu-btn bg-green shadow">
-                            星期{{xqList[courseItem.xqj]}} {{courseItem.jcs}}-{{(courseItem.jcs+courseItem.cxjs)}}节
+                            星期{{xqList[courseItem.xqj]}} {{courseItem.startingPeriod}}-{{(courseItem.startingPeriod+courseItem.lastingPeriods)}}节
                         </button>
                     </picker>
                 </view>
@@ -77,7 +77,7 @@
                 <button class="cu-btn bg-orange-1 round shadow-blur lg" @click="add">添加</button>
             </view>
         </view>
-        <view class="cu-modal bottom-modal" :class="modalName=='ZcModal'?'show':''">
+        <view class="cu-modal bottom-modal" :class="modalName=='WeekSelectorModal'?'show':''">
             <view class="cu-dialog">
                 <view class="cu-bar bg-white">
                     <view class="action text-blue" @click="modalName = null">单选</view>
@@ -85,7 +85,7 @@
                 </view>
                 <view class="grid col-4 padding-sm bg-gray">
                     <view v-for="(item, index) in 20" :key="index" class="padding-xs" wx:key="week">
-                        <button class="cu-btn blue block" :class="getZcd(index+1)?'bg-blue':'line-blue'" @click="weekChange(index+1)">
+                        <button class="cu-btn blue block" :class="getZcd(index+1)?'bg-blue':'line-blue'" @click="weekSelector(index+1)">
                             第{{index+1}}周
                         </button>
                     </view>
@@ -106,11 +106,11 @@
                 showColorPicker: false,
                 modalName: "",
                 courseItem: {
-                    kcmc: "", // 课程
-                    xm: "", // 教师
-                    cdmc: "", // 地点
-                    jcs: 3, // 开始节次
-                    cxjs: 2, // 持续节次
+                    courseName: "", // 课程
+                    teacherName: "", // 教师
+                    courseLocation: "", // 地点
+                    startingPeriod: 3, // 开始节次
+                    lastingPeriods: 2, // 持续节次
                     zcd: [2, 3, 4, 6], // 周次
                     zcdd: "2-3,6周", // 周次简称
                     xqj: 2,
@@ -144,8 +144,8 @@
                 console.log(e.detail.value)
                 const value = e.detail.value
                 this.courseItem.xqj = value[0] ? value[0] : 1
-                this.courseItem.jcs = value[1] ? value[1] : 1
-                this.courseItem.cxjs = value[2] ? value[2] : 1
+                this.courseItem.startingPeriod = value[1] ? value[1] : 1
+                this.courseItem.lastingPeriods = value[2] ? value[2] : 1
             },
             // 周次数组转字符串
             zcLToS: function(zcd) {
@@ -178,7 +178,7 @@
                 return s.join(",") + '周'
             },
             // 周次改变
-            weekChange: function(index) {
+            weekSelector: function(index) {
                 let zcd = this.courseItem.zcd
                 const zxdIndex = zcd.indexOf(index)
                 if (zxdIndex != -1) {
@@ -201,7 +201,7 @@
             // 添加课程
             add: function() {
                 console.log(this.courseItem)
-                if (!this.courseItem.kcmc) {
+                if (!this.courseItem.courseName) {
                     uni.showModal({
                         content: "请输入课程名称",
                         showCancel: false

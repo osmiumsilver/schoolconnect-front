@@ -14,7 +14,7 @@
                     <text class="cuIcon-title text-orange"></text>选择学期
                 </view>
                 <view class="action">
-                    <term-picker @xnm="xnmClick" @xqm="xqmClick" @confirm="confirmClick"></term-picker>
+                    <term-picker @xnm="chooseYear" @xqm="chooseSemester" @confirm="confirmClick"></term-picker>
                 </view>
             </view>
         </view>
@@ -32,7 +32,7 @@
             </view>
             <view class="list-item text-black" v-for='(item, index) in examList' :key='index' :class="index%2?'bg-gray':'bg-white'">
                 <view class="">
-                    <text class="text-bold">{{item.kcmc}}</text>
+                    <text class="text-bold">{{item.courseName}}</text>
                 </view>
                 <view class="list-subitem margin-top-sm">
                     <view class="">
@@ -79,10 +79,10 @@
             cuEmpty,
         },
         methods: {
-            xqmClick: function(e) {
+            chooseSemester: function(e) {
                 this.xqm = e
             },
-            xnmClick: function(e) {
+            chooseYear: function(e) {
                 this.xnm = e
             },
             confirmClick: function() {

@@ -1,6 +1,6 @@
 <template>
   <view>
-    <cu-custom bgColor="bg-blue-11" :isBack="true">
+    <cu-custom bgColor="bg-orange-1" :isBack="true">
       <view slot="backText">
         返回
       </view>
@@ -87,10 +87,12 @@ export default {
       }
       this.$reqs(":8081/user/info/review", "GET", getData, res => {
 
-        if (res.code === "200") {
+        if (res.code == 200) {
           const itemLength = res.data.length
-          this.showButtons = true
+
+
           if (itemLength) {
+            this.showButtons = true
             this.reviewList = res.data
             this.choFlag = new Array(itemLength).fill(false)
             this.emptyType = "success"
@@ -112,7 +114,7 @@ export default {
 
       this.$reqs(':8081/user/info', 'GET', {userId: userId}
           , res => {
-            if (res.code === "200") {
+            if (res.code == 200) {
               let str = ''
               for (let i in res.data) {
                 str += res.data[i] + '\r\n'
@@ -161,7 +163,7 @@ export default {
         complete: (res) => {
           if (res.confirm) {
             this.$reqs(":8081/user/info/review", "PUT", postData, res => {
-              if (res.code === "200") {
+              if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',
                   mask: false,

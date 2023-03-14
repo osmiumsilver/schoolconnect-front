@@ -35,11 +35,9 @@
 </template>
 
 <script>
-import wxRequest from '@/utils/wxRequest';
 import tip from '@/utils/tip';
-import dateUtil from '@/utils/date-util';
-import Session from '@/utils/session';
-import dateTimePicker from '@/utils/datepicker.js';
+
+
 
 export default {
   data() {
@@ -56,11 +54,6 @@ export default {
     };
   },
 
-  onShow(options) {//if (options.id !== undefined){
-    //tip.confirm('onshow-id='+options.id, {}, '提示',false)
-    // }       
-  },
-
   onLoad(options) {
     if (options.id == undefined) {} else {
       this.getDetail(options.id);
@@ -68,9 +61,6 @@ export default {
     }
   },
 
-  mixins: [],
-  components: {},
-  props: {},
   methods: {
     goBack(e) {
       uni.navigateBack({
@@ -95,8 +85,6 @@ export default {
     }
 
   },
-  computed: {},
-  watch: {}
 };
 </script>
 <style lang="scss" src="@/static/styles/common_form.scss">

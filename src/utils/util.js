@@ -122,18 +122,18 @@ export function reqs(url, method, data, successres, failres) {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token,
         },
-        success: function (res) {
-
+        success(res) {
+            if (res.statusCode === 401){
+                getSchoolToken('', uni.getStorageSync("userpass"))
+            }
             if (res.statusCode < 399)
                 return typeof successres == "function" && successres(res.data);
-            else if (res.statusCode === 401)
-                getSchoolToken('', uni.getStorageSync("userpass"))
             else {
                 return typeof failres == "function" && failres(res.data)
             }
         },
-        fail: function (error) {
-            return typeof failres == "function" && failres(error)
+        fail(err) {
+            return typeof failres == "function" && failres(err)
         },
         complete() {
             uni.hideLoading()

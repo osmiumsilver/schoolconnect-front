@@ -1,18 +1,24 @@
 <template>
 
   <view class="container">
+    <cu-custom bgColor="bg-orange-1" :isBack="true">
+      <view slot="backText">
+        返回
+      </view>
+      <view slot="content">
+        发布公告
+      </view>
+    </cu-custom>
     <view class="grid">
       <input hidden name="id" v-model="entry.id"></input>
       <view style="display:flex;justify-content: space-between;">
-        <view style="padding: 30rpx 30rpx 10rpx 34rpx;">公告内容：</view>        
-        <radio class="radio" value="1" :checked="notifyAll" @tap="notifyChange" style="padding: 30rpx 30rpx 10rpx 34rpx;">
-            <text>给组织成员发送通知</text>
-          </radio>
-      </view>      
-      <i-input id="content" v-model="entry.content" type="textarea2" myStyle="height:500rpx;border: 1px solid #eee;padding: 10rpx;" title placeholder="请输入公告内容" maxlength="1500" @change="bindChange" :disabled="audit" :errorMessage="errMsgs.contentErrMsg"></i-input>
+        <view style="padding: 30rpx 30rpx 10rpx 34rpx;">公告内容：</view>
+
+      </view>
+      <i-input id="content" v-model="entry.content" type="textarea2" myStyle="height:500rpx;border: 1px solid #eee;padding: 10rpx;" title placeholder="请输入公告内容" maxlength="1500" @change="bindChange" :errorMessage="errMsgs.contentErrMsg"></i-input>
     </view>
     <view class="btn-box">
-      <view class="biz-btn save" v-if="(isSuperAdmin || entry.user.id == userId) && entry.id != 0" @tap="del">删除</view>
+      <view class="biz-btn save" v-if="(isSuperAdmin || entry.user.id == this.userId) && entry.id != 0" @tap="del">删除</view>
       <view class="biz-btn save" :style="(entry.id == 0 || entry.id == undefined?'':'display:none')" @tap="submit">{{entry.id == 0 || entry.id == undefined?"发布":"发布"}}</view>
     </view>
     <i-message id="message"></i-message>
@@ -21,16 +27,11 @@
 </template>
 
 <script>
-import wxRequest from '@/utils/wxRequest';
 import tip from '@/utils/tip';
-import dateUtil from '@/utils/date-util';
-import Session from '@/utils/session';
-import dateTimePicker from '@/utils/datepicker.js';
 
 export default {
   data() {
     return {
-
         entry: {
           id: 0,
           content: ''
@@ -39,10 +40,9 @@ export default {
           required: ["content"]
         },
         errMsgs: {},
-        audit: false,
         //是否是审核状态
         isSuperAdmin: false,
-        userId: 0,
+        userId: uni.getStorageSync("user_info").employeeId,
         notifyAll: true
 
     };
@@ -63,9 +63,6 @@ export default {
     }
   },
 
-  mixins: [],
-  components: {},
-  props: {},
   methods: {
     bindChange(e) {
       this.entry[e.currentTarget.id] = e.detail.detail == undefined ? e.detail.value : e.detail.detail.value;
@@ -140,8 +137,7 @@ export default {
     }
 
   },
-  computed: {},
-  watch: {}
+
 };
 </script>
 <style lang="scss" src="@/static/styles/common_form.scss">

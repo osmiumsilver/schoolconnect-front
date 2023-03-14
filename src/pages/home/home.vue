@@ -1,17 +1,14 @@
 <template>
   <view>
-
+    <!--占位橙色顶部-->
+    <view class="cu-carousel-bg shadow bg-orange-1"></view>
 
     <!-- 轮播 -->
-    <view style="padding-top: 80rpx;position: relative;">
-      <view class="cu-carousel-bg shadow bg-blue-1"></view>
-      <cu-carousel :imgList="swiperList" @selected="selectedBanner"></cu-carousel>
-    </view>
+    <cu-carousel :imgList="swiperList"></cu-carousel>
 
 
     <!-- 功能列表大Div-->
     <view class="margin-left-sm margin-right-sm margin-bottom-sm text-df">
-
 
       <!-- 上部分大Div  成绩、学籍管理、课程查询、活动区域   从左到右进入 flex排版 -->
       <view class="flex animation-slide-left margin-top-xs">
@@ -47,13 +44,13 @@
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="campusServiceNavigate('activity',false)">
+              style="height:80rpx;" @click="campusServiceNavigate('campaign',false)">
             <image class='round fun-icon' src='../../static/fun_ico/library.png'></image>
             活动区域
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="campusServiceNavigate('messageboard',true)">
+              style="height:80rpx;" @click="campusServiceNavigate('messageboard',false)">
             <image class='round fun-icon' src='../../static/fun_ico/electric.png'></image>
             公告区域
           </button>
@@ -77,25 +74,28 @@
         <view class="grid">
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="expressInquiry">
+              style="height:80rpx;" @click="expressEnquiry">
             <image class='round fun-icon' src='../../static/fun_ico/qc.png'></image>
             快递查询
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="publicServiceNavigate('print')">
+              style="height:80rpx;" @click="gotoPrint()">
             <image class='round fun-icon' src='../../static/fun_ico/apply.png'></image>
             打印服务
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="campusServiceNavigate('fixer')">
+              style="height:80rpx;" @click="campusServiceNavigate('repair',false)">
             <image class='round fun-icon' src='../../static/fun_ico/found.png'></image>
-            保修区域
+            报修区域
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="publicServiceNavigate('takeaway')">
+              style="height:80rpx;"
+              @click="comingSoon">
+            <!--         TODO 外卖     @click="publicServiceNavigate('takeaway')">-->
+
             <image class='round fun-icon' src='../../static/fun_ico/more.png'></image>
             外卖送货
           </button>
@@ -118,11 +118,9 @@ export default {
   name: "home",
   data() {
     return {
-      // url: rootUrl + "api",
       StatusBar: this.StatusBar,
       CustomBar: this.CustomBar,
       swiperList: [],
-      animation: '',
       yearArray: getApp().globalData.yearArray,
       role: uni.getStorageSync("user_info").role
     }
@@ -131,149 +129,139 @@ export default {
     cuCarousel
   },
   created() {
+    this.init()
   },
   methods: {
-
     init: function () { // 获取轮播图信息
       if (!this.swiperList.length) {
-        uni.request({
-          url: rootUrl + ':8081/ui/carousel',
-          method: 'GET',
-          data: {},
-          success: res => {
-            this.swiperList = res.data.results
+        this.$reqs(":8081/ui/banner", "GET", {}, res => {
+          if (res.code == 200) {
+            this.swiperList = res.data
           }
-
-
         })
-
-
       }
-    },
-
-    selectedBanner(item, index) { // 点击轮播图图片
-      // #ifdef MP-WEIXIN
-      wx.navigateTo({
-        url: "/pages/home/web/web?url=" + item.web
-      })
-      // #endif
     },
 
     infoServiceNavigate() {
-      this.loginCheck()
+      this.loginCheck(res => {
+        if (res != 1) {
+          switch (this.role) {
+            case(0):
+              uni.navigateTo({
+                url: "/pages/home/info/info_review/info_review",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
+            case(1):
+              uni.navigateTo({
+                url: "/pages/home/info/info_review/info_review",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
+            case(2):
+              uni.showModal({
+                title: '提示',
+                content: '您没有权限查看学生学籍信息！',
+                showCancel: false,
+                cancelText: '好',
+                confirmText: '好',
+              });
+              return;
+            case(3):
+              uni.navigateTo({
+                url: "/pages/home/info/info",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
 
-      switch (this.role) {
-        case(0):
-          uni.navigateTo({
-            url: "/pages/home/info/info_review/info_review",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-        case(1):
-          uni.navigateTo({
-            url: "/pages/home/info/info_review/info_review",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-        case(2):
-          uni.showModal({
-            title: '提示',
-            content: '您没有权限查看学生学籍信息！',
-            showCancel: false,
-            cancelText: '好',
-            confirmText: '好',
-          });
-          return;
-        case(3):
-          uni.navigateTo({
-            url: "/pages/home/info/info",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
+          }
 
-      }
-    },
-    gradeServiceNavigate() {
-      this.loginCheck()
-
-      switch (this.role) {
-        case(0):
-          uni.navigateTo({
-            url: "/pages/home/info/grade_review/grade_review",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-        case(1):
-          uni.navigateTo({
-            url: "/pages/home/grade/grade_review/grade_review",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-        case(2):
-          uni.navigateTo({
-            url: "/pages/home/grade/grade_manage/grade_manage",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-        case(3):
-          uni.navigateTo({
-            url: "/pages/home/grade/grade",
-            fail: res => {
-              console.log(res)
-            }
-          })
-          return;
-
-      }
-    }
-    ,
-    campusServiceNavigate(nav, multipleRoles) {
-      this.loginCheck()
-
-      if (multipleRoles == true) {
-        switch (this.role) {
-          case (3):
-
-            uni.navigateTo({
-              url: "/pages/home/" + nav + "/" + nav,
-              fail: res => {
-                console.log(res)
-              }
-            })
-            return
-          case (0, 1, 2):
-            uni.navigateTo({
-              url: "/pages/home/" + nav + "/manage/manage",
-              fail: err => {
-                console.log(err)
-              }
-            })
-            return
-
-        }
-
-      }
-      uni.navigateTo({
-        url: "/pages/home/" + nav + "/" + nav,
-        fail: res => {
-          console.log(res)
         }
       })
-      return
+
+
     },
-    loginCheck() {
+    gradeServiceNavigate() {
+      this.loginCheck(res => {
+        if (res != 1) {
+          switch (this.role) {
+            case(0):
+            case(1):
+              uni.navigateTo({
+                url: "/pages/home/grade/grade_review/grade_review",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
+            case(2):
+              uni.navigateTo({
+                url: "/pages/home/grade/grade_teacher/grade_teacher",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
+            case(3):
+              uni.navigateTo({
+                url: "/pages/home/grade/grade",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
+
+          }
+        }
+      })
+
+    },
+    campusServiceNavigate(nav, multipleRoles) {
+      this.loginCheck(res => {
+        if (res != 1) {
+          if (multipleRoles == true) {
+            switch (this.role) {
+              case (3):
+
+                uni.navigateTo({
+                  url: "/pages/home/" + nav + "/" + nav,
+                  fail: res => {
+                    console.log(res)
+                  }
+                })
+                return
+              case(0):
+              case(1):
+              case(2):
+                uni.navigateTo({
+                  url: "/pages/home/" + nav + "/manage/manage",
+                  fail: err => {
+                    console.log(err)
+                  }
+                })
+                return
+
+            }
+
+          }
+          uni.navigateTo({
+            url: "/pages/home/" + nav + "/" + nav,
+            fail: res => {
+              console.log(res)
+            }
+          })
+        }
+      })
+
+
+    },
+    loginCheck(callback) {
       if (!uni.getStorageSync('wx_info')) {
         uni.showModal({
           content: '您还未登录，点击确定进行登录',
@@ -294,9 +282,8 @@ export default {
               });
             }
           }
-
         })
-        return;
+        return callback(1)
       }
       if (!uni.getStorageSync('user_info')) {
         uni.showModal({
@@ -304,39 +291,47 @@ export default {
           showCancel: false,
           confirmText: '好',
         })
-        return;
+        return callback(1)
       }
-
-    }
-    ,
+return callback(0)
+    },
     publicServiceNavigate(nav) {
-      this.loginCheck()
-      uni.navigateTo({
-        url: "/pages/home/" + nav + "/" + nav,
-        fail: res => {
-          console.log(res)
+      this.loginCheck(res => {
+        if (res != 1) {
+          uni.navigateTo({
+            url: "/pages/home/" + nav + "/" + nav,
+            fail: res => {
+              console.log(res)
+            }
+          })
         }
       })
-      return
 
 
     },
 
 
-    comingSoon: function () {
-      wx.showModal({
+    comingSoon() {
+      uni.showModal({
         title: '提示',
         content: '敬请期待~~',
         showCancel: false,
       })
     },
-
-    expressInquiry: function () { //外卖
+    gotoPrint() {
+      uni.navigateToMiniProgram({
+        appId: 'wx5b6393cd6fe4911d',
+      })
+    },
+    expressEnquiry() { //快递
       // #ifdef MP-WEIXIN
       uni.navigateTo({
-        url: 'plugin://kdPlugin/index?num=' + sus + '&appName=校园服务台&return=0',
-//TODO make it work
-      });
+        url: "/pages/home/delivery_enquiry/delivery_enquiry",
+        fail: res => {
+          console.log(res)
+        }
+      })
+
       // #endif
 
       // #ifdef MP-QQ
@@ -350,7 +345,6 @@ export default {
   },
   computed: {
     style() {
-      let StatusBar = this.StatusBar;
       let CustomBar = this.CustomBar;
       let style = `padding-top:${CustomBar}px;`;
       return style
@@ -361,7 +355,6 @@ export default {
 
 <style lang="scss">
 .cu-carousel-bg {
-  position: absolute;
   top: 0;
   width: 100vw;
   height: 250rpx;

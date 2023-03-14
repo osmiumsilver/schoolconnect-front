@@ -83,7 +83,6 @@ textarea {
 	color:$primaryColor;
 	background-color:white;
 	border: 2rpx solid $primaryColor;
-	margin: 0 15rpx;
 	border-radius:15rpx;
 	font-size:32rpx;
 	text-align:center;
@@ -134,7 +133,7 @@ input:disabled{
 			border-radius:40px;
 		  }
 		}
-	}  
+	}
 	.st-title {
 	  display: flex;
 	  align-items: center;
@@ -155,7 +154,7 @@ input:disabled{
 		font-size: 24rpx;
 	  }
 	}
-  
+
 	.st-bottom {
 	  display: flex;
 	  align-items: center;

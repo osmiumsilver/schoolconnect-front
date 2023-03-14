@@ -10,7 +10,38 @@
       "style": {}
     },
     {
+      "path": "pages/home/repair/repair",
+      "style": {
+        "navigationBarTitleText": "宿舍报修助手"
+      }
+    },
+    {
+      "path": "pages/home/repair/publish/publish",
+      "style": {
+        "navigationBarTitleText": "申报申请",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/repair/admin/admin",
+      "style": {
+        "navigationBarTitleText": "申报管理",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/repair/detail/detail",
+      "style": {
+        "navigationBarTitleText": "申报详情",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
       "path": "pages/home/course/course",
+      "style": {}
+    },
+    {
+      "path": "pages/home/course/manage/manage",
       "style": {}
     },
     {
@@ -19,10 +50,6 @@
     },
     {
       "path": "pages/bind/bind",
-      "style": {}
-    },
-    {
-      "path": "pages/my/about/about",
       "style": {}
     },
     {
@@ -45,11 +72,6 @@
       "path": "pages/home/phone/phone",
       "style": {}
     },
-    // ,{
-    //     "path" : "pages/my/update/update",
-    //     "style" : {}
-    // },
-
     {
       "path": "pages/home/book/book",
       "style": {}
@@ -57,17 +79,6 @@
     {
       "path": "pages/home/book/bookdetail/bookdetail",
       "style": {}
-    },
-    {
-      "path": "pages/home/classroom/classroom",
-      "style": {}
-    },
-    {
-      "path": "pages/home/course/manage/manage",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
-      }
     },
     {
       "path": "pages/home/info/info",
@@ -113,18 +124,41 @@
         "navigationBarBackgroundColor": "#ffffff",
         "enablePullDownRefresh": false
       }
-    },    {
+    },
+    {
       "path": "pages/home/grade/grade_review/grade_review",
       "style": {
         "navigationBarTextStyle": "black",
         "navigationBarBackgroundColor": "#ffffff",
         "enablePullDownRefresh": false
       }
-    },    {
+    },
+    {
       "path": "pages/home/grade/grade_teacher/grade_teacher",
       "style": {
         "navigationBarTextStyle": "black",
         "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/campaign/campaign",
+      "style": {
+        "navigationBarTitleText": "活动区域",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/campaign/detail/detail",
+      "style": {
+        "navigationBarTitleText": "活动区域",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/delivery_enquiry/delivery_enquiry",
+      "style": {
+        "navigationBarTitleText": "",
         "enablePullDownRefresh": false
       }
     }

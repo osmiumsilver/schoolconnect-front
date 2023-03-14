@@ -1,6 +1,6 @@
 <template>
   <view class="flex-col page">
-    <cu-custom bgColor="bg-blue-11" :isBack="true">
+    <cu-custom bgColor="bg-orange-1" :isBack="true">
       <view slot="backText">
         返回
       </view>
@@ -148,7 +148,7 @@ export default {
           putData['requiredChanging'] = 2
           this.$reqs(":8081/user/info", "PUT", putData, res => {
             console.log(res);
-            if (res.code === "200") {
+            if (res.code == 200) {
               uni.showToast({
                 title: '保存成功',
                 mask: false,

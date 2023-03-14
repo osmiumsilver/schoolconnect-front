@@ -3,11 +3,11 @@
     <view class="top-container" @click='loginFromBanner'>
       <image src="../../static/bg_img/bg.png" mode="scaleToFill" class="top-bg"></image>
       <view class="info-container animation-slide-left" :style="style">
-        <image :src="wxInfo?wxInfo.avatarUrl:'../../static/logo.png'" class="wxavatar round solids"
+        <image :src="userInfo ? userInfo.pictureUrl : '../../static/logo.png'" class="wxavatar round solids"
                mode="scaleToFill"></image>
         <view class="info">
           <view>
-            <text class="text-lg">{{ wxInfo ? wxInfo.nickName : '欢迎使用校园服务台！请登录！' }}</text>
+            <text class="text-lg">{{ userInfo ? "欢迎！" : '欢迎使用校园服务台！请登录！' }}</text>
             <!-- <text class="margin-left-sm">{{ userInfo?userInfo.username:'来宾模式' }}</text> -->
           </view>
           <view class="margin-top-xs">
@@ -46,15 +46,10 @@
         <view class="cu-item arrow" @click='about'>
           <view class="content">
             <text class="cuIcon-infofill orange-1" style='font-size:20px;'></text>
-            <text class="text-black">关于/反馈</text>
+            <text class="text-black">联系电话</text>
           </view>
         </view>
-        <!--                <view class="cu-item arrow" @click='update'>
-                    <view class="content">
-                        <text class="cuIcon-formfill orange-1" style='font-size:20px;'></text>
-                        <text class="text-black">更新日志</text>
-                    </view>
-                </view> -->
+
         <view class="cu-item arrow" @click='switchAccount'>
           <view class="content">
             <text class="cuIcon-settingsfill orange-1" style='font-size:20px;'></text>
@@ -85,37 +80,35 @@ export default {
   },
   computed: {
     style() {
-      let StatusBar = this.StatusBar;
       let CustomBar = this.CustomBar;
       return `padding-top:${CustomBar}px;`
     }
   },
   created() {
-    // this.init()
+    this.init()
   },
   methods: {
     init: function () {
+      // if(uni.getStorageSync('token'))
+      // {this.$reqs(":8081/user/info", "GET", {},
+      //     res => {
+      //       if (res.code == 200) {
+      //         this.userInfo = res.data
+      //         uni.setStorageSync("user_info", res.data)
+      //       }
+      //     }
+      // )}
       this.userInfo = uni.getStorageSync("user_info")
       this.wxInfo = uni.getStorageSync("wx_info")
+
     },
     about() {
       uni.navigateTo({
-        url: "../my/about/about",
+        url: "/pages/home/phone/phone",
         fail: res => {
           console.log(res)
         }
       })
-    },
-    // update() {
-    //     uni.navigateTo({
-    //         url: "../mine/update/update",
-    //         fail: res => {
-    //             console.log(res)
-    //         }
-    //     })
-    // },
-    question: function () {
-
     },
 
     loginFromBanner() {
@@ -163,8 +156,9 @@ export default {
           content: "是否切换账号？",
           success: res => {
             if (res.confirm) {
+              uni.removeStorageSync("token")
               uni.removeStorageSync("user_info")
-              getApp().globalData.token = '';
+
 
               // uni.clearStorageSync()
               uni.navigateTo({

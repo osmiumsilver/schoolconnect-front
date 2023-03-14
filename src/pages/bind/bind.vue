@@ -1,6 +1,6 @@
 <template>
   <view>
-    <cu-custom bgColor="bg-blue-11" :isBack="true">
+    <cu-custom bgColor="bg-orange-11" :isBack="true">
       <view slot="backText">
         返回
       </view>
@@ -26,7 +26,7 @@
         <view class="cu-form-group text-right">
           <view class="title">密码</view>
           <input placeholder="统一认证密码" type='password' v-model="form.password"></input>
-          <text class="cuIcon-emojifill text-orange"></text>
+          <text class="cuIcon-lock text-orange"></text>
         </view>
       </view>
       <view v-if="captcha_path" class="margin padding-sm">
@@ -55,7 +55,6 @@
 <script>
 import Base64 from 'base-64';
 import {getSchoolToken} from "../../utils/util";
-// var Base64 = require('js-base64').Base64; //必须这么导入不然不行啊我不
 export default {
   data() {
     return {
@@ -79,46 +78,51 @@ export default {
         })
         return
       }
-      let postData = this.form //Form放入Postdata
 
       // if (this.cookies) { //选择性地添加这些数据 Demo
       //   postData['cookies'] = this.cookies
       //   postData['captcha'] = this.captcha
       // }
-      getSchoolToken(postData, this._BasicAuthEncode(), res => {
-        if (res.code === "1206")
+      getSchoolToken(this.form, this._BasicAuthEncode(), res => {
+        if (res.code == 1206)
           uni.showModal({
             title: '提示',
             content: '用户名或密码不正确，请重新输入',
             showCancel: false,
-            cancelText: '',
             confirmText: '好',
           })
         return;
       });
 
-      let getData = {};
-      getData['userId'] = this.form.username;
-      this.$reqs(":8081/user/info", "GET", getData, res => {
-        if (res.code != 200) {
-          // if (res.data['cookies']) {
-          //   this.captcha_path = rootUrl + 'media/captcha/' + this.form
-          //           .username +
-          //       '.png?v=' + new Date().getTime()
-          //   this.cookies = res.data['cookie']
-          // }
+      if (uni.getStorageSync("token")) {
+        this.$reqs(":8081/user/info", "GET", {},
+            res => {
+         if(res.code == 200)
+           uni.setStorageSync('user_info', res.data)
+         {uni.showToast({
+            title: '登录成功',
+            mask: false,
+            duration: 1500
+          });
+
+          uni.navigateBack(-1);}
+        },res=>{
           uni.showModal({
+            title: '登录失败',
             content: res.msg,
             showCancel: false
           })
-        }
-        uni.setStorageSync('user_info', res.data)
-        uni.navigateBack(-1)
+        })
 
-
-      })
-
-
+      }
+      else {
+        uni.showToast({
+          title: '登录失败',
+          icon: 'error',
+          mask: false,
+          duration: 1500
+        });
+      }
     },
     _BasicAuthEncode() {
       const userpass = Base64.encode(this.form.username + ":" + this.form.password)
@@ -128,7 +132,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
