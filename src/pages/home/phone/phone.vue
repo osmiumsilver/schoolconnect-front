@@ -257,19 +257,8 @@
                     }
                     this.$req('api/study/teacher_tel/', "post", postData, res => {
                         if (res.code === 10000) {
-                            if (res.data.teacher_tel_list.length) {
-                                this.teacherTelList = res.data.teacher_tel_list
-                                this.emptyType = "success"
-                                this.emptyMsg = "加载完成"
-                            } else {
-                                this.emptyType = "success"
-                                this.emptyMsg = "未查询到信息"
-                                this.teacherTelList = []
-                            }
-                        } else {
-                            this.emptyType = "error"
-                            this.emptyMsg = res.msg
-                            this.teacherTelList = []
+                          if (res.data.teacher_tel_list.length)
+                            this.teacherTelList = res.data.teacher_tel_list
                         }
                     })
                 }

@@ -96,7 +96,7 @@
 </template>
 
 <script>
-    import colorPicker from "../../../../components/color-picker/color-picker";
+    import colorPicker from "@/components/color-picker/color-picker";
     export default {
         components: {
             colorPicker

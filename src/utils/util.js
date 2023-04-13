@@ -1,42 +1,13 @@
-export let rootUrl = 'http://127.0.0.1';
-
-// const formatTime = date => {
-//     const year = date.getFullYear()
-//     const month = date.getMonth() + 1
-//     const day = date.getDate()
-//     const hour = date.getHours()
-//     const minute = date.getMinutes()
-//     const second = date.getSeconds()
-
-//     return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-// }
-// const formatTime1 = date => {
-//     const hour = date.getHours()
-//     const minute = date.getMinutes()
-
-//     return [hour, minute].map(formatNumber).join(':')
-// }
-// const formatTime2 = date => {
-//     const year = date.getFullYear()
-//     const month = date.getMonth() + 1
-//     const day = date.getDate()
-
-//     return [year, month, day].map(formatNumber).join('-')
-// }
-
-// const formatTime22 = date => {
-//     const year = date.getFullYear()
-//     const month = date.getMonth() + 1
-//     const day = date.getDate()
-
-//     return [year, month, day].map(formatNumber).join('/')
-// }
+export let rootUrl = 'http://100.100.17.107';
 export const formatNumber = n => {
     n = n.toString()
     return n[1] ? n : '0' + n
 }
 
-export function wechatLogin() {
+/*
+获取微信code
+ */
+export function wechatLogin(callback) {
     uni.login({
         provider: 'weixin',
         success: async (loginRes) => {
@@ -49,118 +20,139 @@ export function wechatLogin() {
                 success: res => {
                     if (res.data.data.openid === undefined) {
                         console.log('获取openid失败: ', res.data.data.errMsg);
-                        return
                     }
                     // if (res.data.data.userId !== undefined) {
                     //     uni.setStorageSync('user_id', res.data.data.user_id)
                     // }
                     uni.setStorageSync('openid', res.data.data.openid)
-
                 },
                 fail: (err) => {
-                    console.log("WxCode Request Err : ", err)
+                    uni.showToast({
+                        title: '获取OpenID失败',
+                        icon: 'error',
+                        duration: 1500
+                    });
+                    console.log("【Error】request.openid ： ",err)
                 }
             });
         },
         fail: (err) => {
-            console.log("WxLogin Err : ", err)
+            console.log("【Error】 wx.login : ", err)
         },
     })
 }
 
-export function login() {
-    if (res.authSetting['scope.userInfo']) {
-        // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-        uni.getUserInfo({
-            success: res => {
-                console.log(res.userInfo)
-                //性别 0：未知、1：男、2：女
-                uni.setStorageSync('wx_info', res.userInfo)
-            }
-        })
-        let postData = this.form
-        if (this.cookies) {
-            postData['cookies'] = this.cookies
-            postData['captcha'] = this.captcha
-        }
-        this.$req("api/login/", "post", postData, res => {
-            if (res.code !== 10000) {
-                if (res.data['cookie']) {
-                    this.captcha_path = rootUrl + 'media/captcha/' + this.form.username +
-                        '.png?v=' + new Date().getTime()
-                    this.cookies = res.data['cookie']
-                }
-                uni.showModal({
-                    content: res.msg,
-                    showCancel: false
-                })
-            } else {
-                let user_info = res.data
-                user_info['password'] = this.form.password
-                uni.setStorageSync('user_info', user_info)
-                uni.navigateBack(-1)
-            }
-        })
-    } else {
-        uni.showModal({
-            content: "请允许获得您的公开信息",
-            showCancel: true
-        })
-    }
+
+export function noaccess() {
+    uni.showModal({
+        title: '提示',
+        content: '您无权进行此操作',
+        showCancel: false,
+        confirmText: '好',
+    });
 }
 
+/*
+通用请求方法封装，高度完成
+ */
 export function reqs(url, method, data, successres, failres) {
+    console.log( "[reqs] Request data : ", data)
     uni.showLoading({
-        title: '请稍后',
-    })
-    let token = uni.getStorageSync("token");
-    uni.request({
-        url: rootUrl + url,
-        data: data,
-        method: method,
-        header: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        },
-        success(res) {
-            if (res.statusCode === 401){
-                getSchoolToken('', uni.getStorageSync("userpass"))
-            }
-            if (res.statusCode < 399)
-                return typeof successres == "function" && successres(res.data);
-            else {
-                return typeof failres == "function" && failres(res.data)
-            }
-        },
-        fail(err) {
-            return typeof failres == "function" && failres(err)
-        },
-        complete() {
-            uni.hideLoading()
+        title: '加载中',success: (res)=>{
+            let token = uni.getStorageSync("token");
+            uni.request({
+                url: rootUrl + url,
+                data: data,
+                method: method,
+                header: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: (res) => {
+                    if (res.statusCode === 401) {
+                        uni.showToast({
+                            title: '授权已过期，请尝试再次操作一下来自动授权。',
+                            icon: 'none',
+                            duration: 1500,
+                            complete: function(res){
+                                getSchoolToken('', uni.getStorageSync("userpass"),res=>{
+                                    uni.setStorageSync("token",res.data.data)
+                                },err=>{
+                                    uni.showToast({
+                                        title: '授权服务器不可用，请联系管理员维修。',
+                                        icon: 'none',
+                                        duration: 1500
+                                    });
+                                })
+                            }
+                        });
+
+                    }
+                    if (res.statusCode < 399 && res.data.data.length) {
+                        this.emptyType = "success"
+                        this.emptyMsg = "加载完成"
+
+                        return typeof successres == "function" && successres(res.data);
+                    }
+                    if (res.statusCode < 399 && !(res.data.data.length)) {
+                        this.emptyType = "success"
+                        this.emptyMsg = "未查询到信息"
+                        return typeof successres == "function" && successres(res.data);
+                    }
+                    else {
+                        return typeof failres == "function" && failres(res.data)
+                    }
+
+                },
+                fail: (err) => {
+                    console.log("【ERROR】Request ： ")
+                    this.emptyType = "error"
+                    this.emptyMsg = err.data.msg
+                    return typeof failres == "function" && failres(err)
+
+                },
+                complete() {
+                    uni.hideLoading()
+                }
+            })
         }
     })
+
 }
 
+/*
+获取Jwt Token
+ */
+export function getSchoolToken(postData, BasicAuth, successres, failres) {
 
-
-export function getSchoolToken(postData, BasicAuth,successres,failres) {
     uni.request({
         url: rootUrl + '/auth/token',
         method: 'POST',
         header: {
-            Authorization: "Basic " + BasicAuth
+            Authorization: "Basic " + BasicAuth,
+            'X-Requested-With': "XMLHttpRequest"
         },
         data: {
             postData
         },
         success: res => {
-            uni.setStorageSync("token", res.data.data)
-            return typeof successres == "function" && successres(res.data);
+            if (res) {
+                if (res.data.code == 200) {
+                    return typeof successres == "function" && successres(res);
+                } else {
+                    console.log("【SError】request.token : ", res)
+                    return typeof failres == "function" && failres(res)
+                }
+            }
+
         },
         fail: (res) => {
-            console.log("获取签发JWT失败：", res)
-            return typeof failres == "function" && failres(res.data)
+            console.log("【Error】request.token : ", res)
+            return typeof failres == "function" && failres(res)
 
+        },
+        complete() {
         }
     })
 }

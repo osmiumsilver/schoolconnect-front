@@ -1,18 +1,16 @@
 <template>
   <view>
     <view class="top-container" @click='loginFromBanner'>
-      <image src="../../static/bg_img/bg.png" mode="scaleToFill" class="top-bg"></image>
+      <image src="@/static/bg_img/bg.png" mode="scaleToFill" class="top-bg"></image>
       <view class="info-container animation-slide-left" :style="style">
-        <image :src="userInfo ? userInfo.pictureUrl : '../../static/logo.png'" class="wxavatar round solids"
+        <image :src="userInfo ? userInfo.pictureUrl : 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM4LmSe4GqtayEzia3RHtauCxFcMTFyl6DG0iaTcjjj0fFLg/'" class="wxavatar round solids"
                mode="scaleToFill"></image>
         <view class="info">
           <view>
-            <text class="text-lg">{{ userInfo ? "欢迎！" : '欢迎使用校园服务台！请登录！' }}</text>
+            <text class="text-xl">{{ userInfo ? "欢迎！" : '欢迎使用校园服务台！请登录！' }}</text>
             <!-- <text class="margin-left-sm">{{ userInfo?userInfo.username:'来宾模式' }}</text> -->
           </view>
-          <view class="margin-top-xs">
-            {{ userInfo ? userInfo.employeeId : '' }}
-          </view>
+
         </view>
       </view>
       <image
@@ -27,7 +25,7 @@
             <text class="text-black">班级</text>
           </view>
           <view class="action">
-            <text class="text-grey text-sm">{{ userInfo ? userInfo.classNo : '来宾模式' }}</text>
+            <text class="text-grey text-sm">{{ userInfo ? userInfo.classNo : '来宾模式' }} / {{userInfo ? userInfo.className : ''}}</text>
           </view>
         </view>
         <view class="cu-item">
@@ -36,17 +34,17 @@
             <text class="text-black">姓名</text>
           </view>
           <view class="action">
-            <text class="text-grey text-sm">{{ userInfo ? userInfo.name : '来宾模式' }}</text>
+            <text class="text-grey text-sm">{{ userInfo ? userInfo.employeeId : '来宾模式' }} / {{ userInfo ? userInfo.name : '' }}</text>
           </view>
         </view>
       </view>
     </view>
     <view class="margin-top-sm">
       <view class="cu-list menu card-menu sm-border">
-        <view class="cu-item arrow" @click='about'>
+        <view class="cu-item arrow" v-if="userInfo" @click='gotoPasswordChange'>
           <view class="content">
             <text class="cuIcon-infofill orange-1" style='font-size:20px;'></text>
-            <text class="text-black">联系电话</text>
+            <text class="text-black">修改密码</text>
           </view>
         </view>
 
@@ -102,9 +100,9 @@ export default {
       this.wxInfo = uni.getStorageSync("wx_info")
 
     },
-    about() {
+    gotoPasswordChange() {
       uni.navigateTo({
-        url: "/pages/home/phone/phone",
+        url: "/pages/my/passwordchange",
         fail: res => {
           console.log(res)
         }
@@ -157,10 +155,9 @@ export default {
           success: res => {
             if (res.confirm) {
               uni.removeStorageSync("token")
+              uni.removeStorageSync("userpass")
               uni.removeStorageSync("user_info")
-
-
-              // uni.clearStorageSync()
+              // uni.clearStorageSync() 不能清除
               uni.navigateTo({
                 url: "/pages/index/index"
               })

@@ -55,8 +55,8 @@
                     title: "第2学期",
                     value: "2",
                 }, ],
-                yearText: "2020-2021",
-                year: '2020',
+                yearText: "2022-2023",
+                year: '2022',
                 termText: "第1学期",
                 semester: '1',
             };

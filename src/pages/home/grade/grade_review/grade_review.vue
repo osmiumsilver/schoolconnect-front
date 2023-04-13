@@ -124,10 +124,8 @@ export default {
   methods: {
 
     getInfoReadyToBeReviewed() {
-      let getData = {
-        userId: uni.getStorageSync("user_info").employeeId
-      }
-      this.$reqs(":8081/grade/review", "GET", getData, res => {
+
+      this.$reqs(":8081/grade/review", "GET", {   userId: uni.getStorageSync("user_info").employeeId}, res => {
 
         if (res.code == 200) {
           const itemLength = res.data.length
@@ -136,17 +134,7 @@ export default {
             this.showButtons = true
             this.reviewList = res.data
             this.choFlag = new Array(itemLength).fill(false)
-            this.emptyType = "success"
-            this.emptyMsg = "加载完成"
-          } else {
-            this.emptyType = "success"
-            this.emptyMsg = "未查询到信息"
-            this.reviewList = []
           }
-        } else {
-          this.emptyType = "error"
-          this.emptyMsg = res.msg
-          this.reviewList = []
         }
       })
     },
@@ -154,7 +142,7 @@ export default {
     detailInfo: function (userId) {
 
       this.$reqs(':8081/user/info', 'GET', {userId: userId}
-          , res => {
+          ,res => {
             if (res.code == 200) {
               let str = ''
               for (let i in res.data) {

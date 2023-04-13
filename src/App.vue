@@ -40,23 +40,39 @@ export default {
     })
     // #endif
 
-    wechatLogin();
+
     this.globalData = {
-      thisDay: this.getDay(),
+      dateOfToday: new Date().getDay(),
       yearArray: this.getYearArray(),
       yearArrayIndex: [4, 2],
     }
 
   },
   onShow: function () {
+      wechatLogin();
     console.log('App Show')
   },
   onHide: function () {
     console.log('App Hide')
   },
+  methods: {
+    getYearArray: function () {
+      let year_array = []
+      let this_year = new Date().getFullYear()
+      for (let i = this_year - 3; i < this_year + 1; i++) {
+        let temp_year = parseInt(i) + '-' + parseInt(i + 1)
+        year_array.push(temp_year)
+      }
+      year_array.push('全部学年')
+      return year_array.reverse()
+    }
+  },
+
 }
 </script>
-
+<style lang="scss">
+@import "uview-ui/index.scss";
+</style>
 <style>
 /************************************************************
 ** 请将全局样式拷贝到项目的全局 CSS 文件或者当前页面的顶部 **
@@ -190,9 +206,7 @@ text {
 }
 </style>
 <!-- uview我也得用 -->
-<style lang="scss">
-@import "uview-ui/index.scss";
-</style>
+
 
 <style lang="scss">
  //colorui三个css
@@ -200,7 +214,7 @@ text {
 @import "colorui/icon.css";
 /* 引入动画 */
 @import "colorui/animation.css";
-@import "common/color.css";
+@import "common/colorui-color.css";
 
 /* 列表展示 */
 .list-container {

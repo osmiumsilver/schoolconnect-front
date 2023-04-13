@@ -1,145 +1,97 @@
 <template>
 
   <view class="container">
-    <cu-custom bgColor="bg-orange-1" :isBack="true">
+    <cu-custom :isBack="true" bgColor="bg-orange-1">
       <view slot="backText">
         返回
       </view>
       <view slot="content">
         发布公告
       </view>
-    </cu-custom>
-    <view class="grid">
-      <input hidden name="id" v-model="entry.id"></input>
-      <view style="display:flex;justify-content: space-between;">
-        <view style="padding: 30rpx 30rpx 10rpx 34rpx;">公告内容：</view>
 
-      </view>
-      <i-input id="content" v-model="entry.content" type="textarea2" myStyle="height:500rpx;border: 1px solid #eee;padding: 10rpx;" title placeholder="请输入公告内容" maxlength="1500" @change="bindChange" :errorMessage="errMsgs.contentErrMsg"></i-input>
+    </cu-custom>
+    <view class="main-form-list">
+    <view>
+      <text>您的身份：</text>
+      <input v-model="userId" class="in-1" disabled="true"></input>
     </view>
-    <view class="btn-box">
-      <view class="biz-btn save" v-if="(isSuperAdmin || entry.user.id == this.userId) && entry.id != 0" @tap="del">删除</view>
-      <view class="biz-btn save" :style="(entry.id == 0 || entry.id == undefined?'':'display:none')" @tap="submit">{{entry.id == 0 || entry.id == undefined?"发布":"发布"}}</view>
+    <input v-model="title" class="in-5"
+              placeholder="请写入标题" placeholder-style="color:#ccc;font-size:14px;"></input>
     </view>
-    <i-message id="message"></i-message>
+
+    <view class="padding flex flex-direction">
+      <button class="cu-btn bg-orange-1 shadow-blur round" @click="publish" type="success">发布</button>
+    </view>
+      <cu-editor  class="card-list-view__item container" ref="editor" :url="rootUrl()+':8081/upload'" :formData="formData" :content="content" @update="onUpdate" @save="onSave"></cu-editor>
+
   </view>
 
 </template>
 
 <script>
-import tip from '@/utils/tip';
 
+import cuEditor from '@/components/cu-editor/cu-editor'
+import {rootUrl} from "@/utils/util";
 export default {
+  components: {
+    cuEditor
+  }
+  ,
   data() {
     return {
-        entry: {
-          id: 0,
-          content: ''
-        },
-        checkRules: {
-          required: ["content"]
-        },
-        errMsgs: {},
-        //是否是审核状态
-        isSuperAdmin: false,
-        userId: uni.getStorageSync("user_info").employeeId,
-        notifyAll: true
-
+      title:'',
+      disabled: true,
+      userId: uni.getStorageSync("user_info").employeeId
     };
   },
 
-  onLoad(options) {
-    if (options.id == undefined) {} else {
-      let entry = Session.get("publish-for-modify");
-      Session.clear("publish-for-modify");
-      this.entry = entry;
-    }
-
-    let user = Session.get('user_load_cache');
-    this.userId = user.id;
-
-    if (user.roles.indexOf(2) > -1) {
-      this.isSuperAdmin = true;
-    }
-  },
 
   methods: {
-    bindChange(e) {
-      this.entry[e.currentTarget.id] = e.detail.detail == undefined ? e.detail.value : e.detail.detail.value;
+    rootUrl() {
+      return rootUrl
     },
-
-    notifyChange(e) {
-      this.notifyAll = !this.notifyAll;
+    onEditorReady() {
+      // #ifdef APP-PLUS || H5 ||MP-WEIXIN
+      uni.createSelectorQuery().select('#editor').context((res) => {
+        this.editorCtx = res.context
+      }).exec()
+      // #endif
     },
-
-    goBack(e) {
-      uni.navigateBack({
-        delta: 1
-      });
+    undo() {
+      this.editorCtx.undo()
     },
+    publish(){
 
-    async del() {
-      await tip.confirm('确认要删除此条数据吗?', {}, '提示');
-      const data = await wxRequest.Get(`tweet/delete`, {
-        id: this.entry.id
-      });
+      this.$reqs(":8081/messageboard", "POST", {title:this.title,body: this.editorCtx,sender: this.userId}, res => {
+                if (res.code == 200 && res.data.length) {
+                  uni.showToast({
+                    title: '发布成功',
+                    mask: false,
+                    duration: 1500
+                  });
 
-      if (data != undefined && data.code >= 1) {
-        if (data.message != undefined && data.message != '') {
-          tip.error(data.message);
-        }
-
-        Session.set('refresh', true);
-        uni.navigateBack({
-          delta: 1
-        });
-      } else {
-        tip.error(data.message);
-      }
-    },
-
-    async submit() {
-      //检查必填
-      let checked = true;
-
-      for (var i = 0; i < this.checkRules.required.length; i++) {
-        let item = this.checkRules.required[i];
-
-        if (this.entry[item] == '' || this.entry[item] == undefined) {
-          this.errMsgs[item + 'ErrMsg'] = '本项为必填项';
-          checked = false;
-        }
-      }
-
-      if (!checked) {
-        return;
-      }
-
-      let url = 'tweet/pubMessage';
-      let data = await wxRequest.Get(url, {
-        content: this.entry.content,
-        type: 7,
-        notifyAll: this.notifyAll
-      });
-
-      if (data != undefined && data.code >= 1) {
-        if (data.message != undefined && data.message != '') {
-          tip.error(data.message);
-        }
-
-        Session.set('refresh', true);
-        uni.navigateBack({
-          delta: 1
-        });
-      } else {
-        tip.error(data.message);
-      }
+                  uni.navigateBack(-1);
+                }
+              })
     }
-
   },
 
 };
 </script>
-<style lang="scss" src="@/static/styles/common_form.scss">
+<style lang="scss">
+@import '@/common/repair.scss';
+@import '@/static/publish.scss';
+</style>
+<style>
 
+
+#editor {
+  width: 100%;
+  height: 300px;
+  background-color: #CCCCCC;
+}
+
+button {
+  margin-top: 10px;
+}
 </style>

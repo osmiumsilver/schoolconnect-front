@@ -1,11 +1,11 @@
+<!--suppress ALL -->
 <template>
   <view>
     <!--占位橙色顶部-->
     <view class="cu-carousel-bg shadow bg-orange-1"></view>
 
     <!-- 轮播 -->
-    <cu-carousel :imgList="swiperList"></cu-carousel>
-
+    <view style="margin: 100rpx 20rpx 80rpx 20rpx"><u-swiper :list="swiperList"></u-swiper></view>
 
     <!-- 功能列表大Div-->
     <view class="margin-left-sm margin-right-sm margin-bottom-sm text-df">
@@ -17,7 +17,7 @@
           <view class='padding-sm bg-blue-1 nav-li shadow' style='height: 200rpx;width: 200rpx;'>
             <view class="nav-title">学业</view>
             <view class="nav-name">School</view>
-            <image class="nav-bg" src="../../static/bg_img/class_study.png"></image>
+            <image class="nav-bg" src="@/static/bg_img/class_study.png"></image>
           </view>
         </view>
 
@@ -27,31 +27,37 @@
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="gradeServiceNavigate()">
-            <image class='round fun-icon' src='../../static/fun_ico/grade.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/grade.png'></image>
             成绩绩点
           </button>
-          <button
-              class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="campusServiceNavigate('course',false)">
-            <image class='round fun-icon' src='../../static/fun_ico/exam.png'></image>
+          <button v-if="role==3"
+                  class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
+                  style="height:80rpx;" @click="campusServiceNavigate('course',false)">
+            <image class='round fun-icon' src='@/static/fun_ico/exam.png'></image>
             课程查询
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-              style="height:80rpx;" @click="infoServiceNavigate()">
-            <image class='round fun-icon' src='../../static/fun_ico/study.png'></image>
+              style="height:80rpx;" @click="personalInfoServiceNavigate()">
+            <image class='round fun-icon' src='@/static/fun_ico/study.png'></image>
             学籍管理
+          </button>
+          <button v-if="role==0"
+                  class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
+                  style="height:80rpx;" @click="goToAdminService">
+            <image class='round fun-icon' src='@/static/fun_ico/study.png'></image>
+            学籍审核
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="campusServiceNavigate('campaign',false)">
-            <image class='round fun-icon' src='../../static/fun_ico/library.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/library.png'></image>
             活动区域
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="campusServiceNavigate('messageboard',false)">
-            <image class='round fun-icon' src='../../static/fun_ico/electric.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/electric.png'></image>
             公告区域
           </button>
         </view>
@@ -66,7 +72,7 @@
           <view class='padding-sm bg-blue-1 nav-li shadow' style='height: 200rpx;width: 200rpx;'>
             <view class="nav-title">生活</view>
             <view class="nav-name">Life</view>
-            <image class="nav-bg" src="../../static/bg_img/class_live.png"></image>
+            <image class="nav-bg" src="@/static/bg_img/class_live.png"></image>
           </view>
         </view>
 
@@ -75,28 +81,28 @@
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="expressEnquiry">
-            <image class='round fun-icon' src='../../static/fun_ico/qc.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/qc.png'></image>
             快递查询
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="gotoPrint()">
-            <image class='round fun-icon' src='../../static/fun_ico/apply.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/apply.png'></image>
             打印服务
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;" @click="campusServiceNavigate('repair',false)">
-            <image class='round fun-icon' src='../../static/fun_ico/found.png'></image>
+            <image class='round fun-icon' src='@/static/fun_ico/found.png'></image>
             报修区域
           </button>
           <button
               class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
               style="height:80rpx;"
-              @click="comingSoon">
-            <!--         TODO 外卖     @click="publicServiceNavigate('takeaway')">-->
+              @click="goToDelivery">
 
-            <image class='round fun-icon' src='../../static/fun_ico/more.png'></image>
+
+            <image class='round fun-icon' src='@/static/fun_ico/more.png'></image>
             外卖送货
           </button>
         </view>
@@ -109,7 +115,6 @@
 </template>
 
 <script>
-import cuCarousel from "../../components/cu-carousel/cu-carousel.vue"
 import {
   rootUrl, wechatLogin
 } from "@/utils/util.js"
@@ -125,30 +130,33 @@ export default {
       role: uni.getStorageSync("user_info").role
     }
   },
-  components: {
-    cuCarousel
-  },
   created() {
     this.init()
   },
   methods: {
     init: function () { // 获取轮播图信息
+      this.role = uni.getStorageSync("user_info").role
       if (!this.swiperList.length) {
-        this.$reqs(":8081/ui/banner", "GET", {}, res => {
-          if (res.code == 200) {
-            this.swiperList = res.data
+        uni.request({
+          url: rootUrl + ':8081/ui/carousel',
+          method: 'GET',
+          success: (res) => {
+            if (res.statusCode == 200)
+              this.swiperList = res.data.data
           }
         })
       }
     },
-
-    infoServiceNavigate() {
+    goToAdminService() {
+      uni.navigateTo({url: '/pages/home/info/info_review'})
+    },
+    personalInfoServiceNavigate() {
       this.loginCheck(res => {
         if (res != 1) {
           switch (this.role) {
             case(0):
               uni.navigateTo({
-                url: "/pages/home/info/info_review/info_review",
+                url: "/pages/home/info/info_lookup",
                 fail: res => {
                   console.log(res)
                 }
@@ -156,7 +164,7 @@ export default {
               return;
             case(1):
               uni.navigateTo({
-                url: "/pages/home/info/info_review/info_review",
+                url: "/pages/home/info/info_review",
                 fail: res => {
                   console.log(res)
                 }
@@ -183,15 +191,24 @@ export default {
           }
 
         }
+
       })
 
 
     },
+
     gradeServiceNavigate() {
       this.loginCheck(res => {
         if (res != 1) {
           switch (this.role) {
             case(0):
+              uni.navigateTo({
+                url: "/pages/home/grade/grade_lookup",
+                fail: res => {
+                  console.log(res)
+                }
+              })
+              return;
             case(1):
               uni.navigateTo({
                 url: "/pages/home/grade/grade_review/grade_review",
@@ -216,6 +233,8 @@ export default {
                 }
               })
               return;
+            case(4):
+             this.$noaccess();
 
           }
         }
@@ -293,7 +312,7 @@ export default {
         })
         return callback(1)
       }
-return callback(0)
+      return callback(0)
     },
     publicServiceNavigate(nav) {
       this.loginCheck(res => {
@@ -306,8 +325,6 @@ return callback(0)
           })
         }
       })
-
-
     },
 
 
@@ -318,6 +335,13 @@ return callback(0)
         showCancel: false,
       })
     },
+    goToDelivery(){
+        uni.navigateToMiniProgram({
+            appId:'wx7e42bbce04b9f46b'
+            }
+        )
+    }
+    ,
     gotoPrint() {
       uni.navigateToMiniProgram({
         appId: 'wx5b6393cd6fe4911d',

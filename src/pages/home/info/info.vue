@@ -51,7 +51,7 @@
           <text class="font_1">录入时间</text>
           <text class="font_2">{{ importDateData }}</text>
         </view>
-        <view>
+        <view style="margin-top: 50rpx">
           <u-button class="section_3 uButton_CSr" v-if="requiredChangeStatus == 0">您的信息无需修改</u-button>
           <u-button class="section_3 uButton_CSr" v-if="requiredChangeStatus == 1" @click="makeEditable">
             修改
@@ -320,6 +320,7 @@ export default {
 }
 
 .section_3 {
+
   align-self: center;
   margin-top: 62.79rpx;
 }

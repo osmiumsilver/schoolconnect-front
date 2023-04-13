@@ -5,6 +5,9 @@ let floor = ['全部宿舍', '1栋', '2栋', '3栋', '4栋', '5栋', '6栋', '7�
 export default {
 	data () {
 		return {
+			emptyMsg:'',
+			tabsIndex : 0,
+			floorIndex : 0,
 			tabList: [{
 				name: '处理中',
 				status: 0
@@ -16,7 +19,9 @@ export default {
 			floorList: [floor],
 			applyData: [],
 			isEndOfList: null,
-			currentIndex: 0
+			currentIndex: 0,
+			role: uni.getStorageSync("user_info").role,
+			userId: uni.getStorageSync("user_info").employeeId
 		}
 	},
 	computed: {
@@ -36,7 +41,7 @@ export default {
 	methods: {
 		// 查看详情
 		navToDetailPage(item) {
-			const isAdmin = uni.getStorageSync("user_info").role ==4 ? true : false
+			const isAdmin = this.role ==0 || this.role == 4
 			uni.navigateTo({
 				url: '/pages/home/repair/detail/detail?detail=' + JSON.stringify(item)+'&isAdmin='+isAdmin
 			})

@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <cu-custom bgColor="bg-blue-1" :isBack="true">
+    <cu-custom :isBack="true" bgColor="bg-blue-1" style="color: whitesmoke">
       <view slot="backText">
         返回
       </view>
@@ -10,7 +10,7 @@
     </cu-custom>
     <view class="header-view">
 
-      <uni-all-tabs :list="tabList" :justifyContent="'space-around'" @change="changeTab"></uni-all-tabs>
+      <uni-all-tabs :justifyContent="'space-around'" :list="tabList" @change="changeTab"></uni-all-tabs>
     </view>
     <view class="card-list-view">
       <block v-for="(item, index) in applyData" :key="index">
@@ -22,36 +22,42 @@
             <view class="content__right">
               <text class="location">{{ item.location }}栋{{ item.dorm }}</text>
               <text class="desc">{{ item.description }}</text>
-              <uni-tag size="mini" :text="applyStatus(item.status)" :type="tagType(item.status)"/>
+              <uni-tag :text="applyStatus(item.status)" :type="tagType(item.status)" size="mini"/>
               <text class="date">{{ item.createTime }}</text>
             </view>
           </view>
           <view class="card__footer">
             <text style="color: #1989fa;" @click="navToDetailPage(item)">查看详情</text>
             <text v-if="item.status === 0" style="color: #f3a73f;" @click="completeRepair(item)">完成维修</text>
-            <text v-if="item.status === 1" style="color: #18bc37;" @click="deleteRepair(item)">处理完成</text>
+            <text v-if="item.status === 0" style="color: #f3a73f;" @click="deleteRepair(item)">删除订单</text>
+            <text v-if="item.status === 1" style="color: #18bc37;" @click="deleteRepair(item)">删除已完成</text>
             <!--						<text v-if="item.status === 2" style="color: #e43d33;" @click="deleteOrder(item)">删除</text>-->
           </view>
-          <view class="level-tag" :style="{backgroundColor: item.level === 1 ? '#07c160' : '#ee0a24'}">
+          <view :style="{backgroundColor: item.level === 1 ? '#07c160' : '#ee0a24'}" class="level-tag">
             {{ item.level === 1 ? '普通维修' : '紧急维修' }}
           </view>
         </view>
       </block>
+      <!-- 提示区域 -->
+
     </view>
-    <uni-all-empty-state v-if="!applyData.length" :imgUrl="emptyState[currentIndex]"></uni-all-empty-state>
+    <cu-empty :type="emptyType">
+      <view slot="text" class="">
+        <view class="margin-bottom-sm">{{ emptyMsg }}</view>
+        <button v-if="emptyType=='search'" class="cu-btn bg-orange-1 round shadow-blur"
+                @click="this.getApplyData()">刷新
+        </button>
+      </view>
+    </cu-empty>
   </view>
 </template>
 
 <script>
-import mixin from '/src/mixins/mixin.js'
+import mixin from '@/mixins/mixin.js'
+import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
 
-const db = uniCloud.database()
-const http = uniCloud.importObject('feedbackSubscribeMsg')
-const limit = 20
-let tabsIndex = 0
-let floorIndex = 0
 export default {
-  mixins: [mixin],
+  mixins: [mixin, search_empty_message_mixin],
   data() {
     return {
       isAdminPage: true
@@ -69,29 +75,19 @@ export default {
      * @description 根据申报状态、楼层、获取申报数据
      * */
     async getApplyData(status) {
-      uni.showLoading({
-        title: '加载中...',
-        mask: true
-      })
+      this.applyData = []
       this.$reqs(":8081/repair", "GET", {status: status}, res => {
         console.log(res);
         if (res.code == 200) {
           this.applyData = res.data
         }
       })
-      // const res = await db.collection('dorm_apply').where({
-      // 	status: this.tabList[tabsIndex].status,
-      // 	floor: floorIndex === 0 ? {} : floorIndex
-      // }).skip(this.applyData.length).orderBy('createTime', 'desc').get()
-      // this.applyData = [...this.applyData, ...res.result.data]
-      // this.isEndOfList = res.result.data.length < limit ? true : false
-      uni.hideLoading()
     },
     /**
      * @description 切换tab获取申报数据、投放插屏广告
      * */
     changeTab(evt) {
-      tabsIndex = evt.index
+      this.tabsIndex = evt.index
       this.currentIndex = evt.index
       this.applyData = []
       this.getApplyData(evt.status)
@@ -101,7 +97,7 @@ export default {
      * @description 切换楼层获取申报数据
      * */
     changePicker(evt) {
-      floorIndex = evt.index
+      this.floorIndex = evt.index
       // if (floorIndex === 0) {
       this.applyData = []
       this.getApplyData()
@@ -133,13 +129,12 @@ export default {
         title: '温馨提示',
         content: '是否处理完成该订单?',
         success: async (res) => {
-          let form = []
-          form[status] = 1
-          form[id] = event.id;
           if (res.confirm) {
-            this.$reqs(":8081/repair", "PUT", form, res => {
+            this.$reqs(":8081/repair", "PUT", [{status: 1, id: event.id}], res => {
               console.log(res);
-              if (res.code == 200) {
+              if (res.code == 200 && res.data == true) {
+                this.getApplyData(this.tabsIndex)
+
               }
             })
           }
@@ -156,7 +151,12 @@ export default {
         content: '是否删除该订单?',
         success: async (res) => {
           if (res.confirm) {
-
+            this.$reqs(":8081/repair", "PUT", [{status:2,id:event.id}], res => {
+              console.log(res);
+              if (res.code == 200 && res.data == true) {
+                this.getApplyData(this.tabsIndex)
+              }
+            })
           }
         }
       })
@@ -165,7 +165,7 @@ export default {
      * @description 管理员验证
      * */
     isAdminValidate() {
-      const isAdmin = uni.getStorageSync('user_info').role = !!4
+      const isAdmin = this.role == 4 || this.role == 0
       if (!isAdmin) {
         uni.showToast({
           title: '暂无权限',
@@ -184,5 +184,5 @@ page {
 }
 </style>
 <style lang="scss" scoped>
-@import '/src/common/repair.scss';
+@import '@/common/repair.scss';
 </style>

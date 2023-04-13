@@ -23,7 +23,7 @@
         <!-- 顶部切换周数 -->
         <view class="cu-center">
           <button class="cu-btn round bg-green shadow week-btn" @click="modalName = 'WeekSelectorModal'">
-            第{{ weekIndex + 1 }}周-周{{ dayOfWeek[thisDay - 1] }}
+            第{{ weekIndex + 1 }}周-周{{ dayOfWeek[dateOfToday - 1] }}
           </button>
         </view>
         <view class="cu-right">
@@ -35,7 +35,7 @@
         <view style='width:10.4vw;' class="flex justify-center align-center">{{ month }}</view>
         <view style='width:89.6vw;height:35rpx;' class="flex">
           <view v-for="(item, index) in dayOfWeek" :key='index' class="flex justify-center align-center flex-sub"
-                :class="index==thisDay-1?'bg-gray orange-1':''">
+                :class="index==dateOfToday-1?'bg-gray orange-1':''">
             周{{ item }}
           </view>
         </view>
@@ -45,7 +45,7 @@
         <view style='width:10.4vw;' class="flex justify-center align-center">月</view>
         <view style='width:89.6vw;height:35rpx' class="flex">
           <view v-for="(item, index) in dayArray" :key='index' class="flex justify-center align-center flex-sub"
-                :class="index==thisDay-1?'bg-gray orange-1':''">
+                :class="index==dateOfToday-1?'bg-gray orange-1':''">
             {{ item }}日
           </view>
         </view>
@@ -102,14 +102,14 @@
             </view>
           </view>
           <view class="cu-list menu sm-border card-menu margin-top margin-bottom">
-            <view class="cu-item arrow">
-              <view class="content" @click="addCourse">
-                <view>
-                  <text class="cuIcon-add text-green padding-right-sm"></text>
-                  添加课程
-                </view>
-              </view>
-            </view>
+<!--            <view class="cu-item arrow">-->
+<!--              <view class="content" @click="addCourse">-->
+<!--                <view>-->
+<!--                  <text class="cuIcon-add text-green padding-right-sm"></text>-->
+<!--                  添加课程-->
+<!--                </view>-->
+<!--              </view>-->
+<!--            </view>-->
             <view class="cu-item arrow" @click="modalName = 'SemesterModal'">
               <view class="content">
                 <view>
@@ -226,7 +226,7 @@ export default {
       dayArray: [], // 存放本周日期
       month: 1, //存放当前月
       dayOfWeek: ['一', '二', '三', '四', '五', '六', '日'],
-      thisDay: 1, //今天周几
+      dateOfToday: 1, //今天周几
       bacimg: "",
       baseImg:"",
       timeSlice: [
@@ -356,9 +356,9 @@ export default {
       let date = new Date();
       let day = date.getDay()
       if (day) {
-        this.thisDay = day
+        this.dateOfToday = day
       } else {
-        this.thisDay = 7
+        this.dateOfToday = 7
       }
     },
     // 获取今天距离某天相差天数
@@ -366,6 +366,7 @@ export default {
     // 周数变化,设置本周日期
     weekSelector: function (index) {
       let value = uni.getStorageSync("start_day")
+      console.log(value)
       let myDate = new Date(value)
       myDate.setDate(myDate.getDate() + index * 7);
 

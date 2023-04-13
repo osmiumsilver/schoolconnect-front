@@ -47,6 +47,9 @@
     {
       "path": "pages/my/my",
       "style": {}
+    },    {
+      "path": "pages/my/passwordchange",
+      "style": {}
     },
     {
       "path": "pages/bind/bind",
@@ -90,7 +93,7 @@
       }
     },
     {
-      "path": "pages/home/info/info_review/info_review",
+      "path": "pages/home/info/info_review",
       "style": {
         "navigationBarTitleText": "信息审核",
         "navigationBarTextStyle": "black",
@@ -149,7 +152,13 @@
       }
     },
     {
-      "path": "pages/home/campaign/detail/detail",
+      "path": "pages/home/campaign/detail",
+      "style": {
+        "navigationBarTitleText": "活动区域",
+        "enablePullDownRefresh": false
+      }
+    },    {
+      "path": "pages/home/campaign/publish",
       "style": {
         "navigationBarTitleText": "活动区域",
         "enablePullDownRefresh": false
@@ -159,6 +168,20 @@
       "path": "pages/home/delivery_enquiry/delivery_enquiry",
       "style": {
         "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/info/info_lookup",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/grade/grade_lookup",
+      "style": {
+        "navigationBarTitleText": "成绩查询",
         "enablePullDownRefresh": false
       }
     }

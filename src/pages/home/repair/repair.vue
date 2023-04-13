@@ -10,8 +10,8 @@
     </cu-custom>
     <view class="header-view">
       <view class="navbar-view">
-        <text @click="navToPublishPage">报修申报</text>
-        <text @click="navToAdminPage">管理员区域</text>
+        <u-button @click="navToPublishPage">报修申报</u-button>
+        <u-button v-if =" role == 0 || role ==4 "@click="navToAdminPage">管理员区域</u-button>
       </view>
       <uni-all-tabs :list="tabList" :justifyContent="'space-around'" @change="changeTab"></uni-all-tabs>
     </view>
@@ -38,30 +38,37 @@
         </view>
       </block>
     </view>
-    <uni-all-empty-state v-if="!applyData.length" :imgUrl="emptyState[currentIndex]"></uni-all-empty-state>
-
+    <!-- 提示区域 -->
+    <cu-empty :type="emptyType">
+      <view slot="text" class="">
+        <view class="margin-bottom-sm">{{ emptyMsg }}</view>
+        <button v-if="emptyType=='search'" class="cu-btn bg-orange-1 round shadow-blur"
+                @click=" getApplyData(status,userId)">刷新
+        </button>
+      </view>
+    </cu-empty>
   </view>
 </template>
 
 <script>
-import mixin from '../../../mixins/mixin.js'
-
-const db = uniCloud.database()
-const limit = 20 // 每次最多获取20条数据
+import mixin from '@/mixins/mixin.js'
+import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
 let tabsIndex = 0 // 默认tabs下标
 let floorIndex = 0 // 默认楼层下标
 export default {
-  mixins: [mixin], // 引入可复用的代码
+  mixins: [mixin,search_empty_message_mixin], // 引入可复用的代码
   data() {
-    return {}
+    return {
+      emptyMsg:'',
+    }
   },
   onLoad() {
-    this.getApplyData(0)
+    this.getApplyData(0,this.userId)
 
   },
   // 触底刷新
   onReachBottom() {
-    !this.isEndOfList && this.getApplyData()
+    !this.isEndOfList && this.getApplyData(status,this.userId)
   },
 
   methods: {
@@ -69,21 +76,13 @@ export default {
     /**
      * @description 根据申报状态、楼层、获取申报数据
      * */
-    async getApplyData(status) {
-      this.$reqs(":8081/repair", "GET", {status: status}, res => {
+    async getApplyData(status,userId) {
+      this.$reqs(":8081/repair/my", "GET", {status: status,userId:userId}, res => {
         console.log(res);
         if (res.code == 200) {
           this.applyData = res.data
         }
       })
-      // 	const res = await db.collection('dorm_apply').where({
-      // 		status: this.tabList[tabsIndex].status,
-      // 		floor: floorIndex === 0 ? {} : floorIndex,
-      // 		openid: uni.getStorageSync('openid')
-      // 	}).skip(this.applyData.length).orderBy('createTime', 'desc').get()
-      // 	this.applyData = [...this.applyData, ...res.result.data]
-      // 	this.isEndOfList = res.result.data.length < limit ? true : false
-      uni.hideLoading()
     },
     /**
      * @description 切换tab获取申报数据、投放插屏广告
@@ -92,26 +91,9 @@ export default {
       tabsIndex = evt.index
       this.currentIndex = evt.index
       this.applyData = []
-      this.getApplyData(evt.status)
+      this.getApplyData(evt.status,this.userId)
     },
-    /**
-     * @description 选择楼栋、根据申报状态、楼层、获取申报数据
-     * */
-    // async getApplyDataItem(floor) {
-    // 	uni.showLoading({
-    // 		title: '加载中...',
-    // 		mask: true
-    // 	})
-    // 	const res = await db.collection('dorm_apply').where({
-    // 		floor: floor,
-    // 		status: this.tabList[tabsIndex].status,
-    // 		openid: uni.getStorageSync('openid')
-    // 	}).orderBy('createTime', 'desc').get()
-    // 	if (res.success) {
-    // 		this.applyData = res.result.data
-    // 	}
-    // 	uni.hideLoading()
-    // },
+
     /**
      * @description 切换楼层获取申报数据
      * */
@@ -154,8 +136,8 @@ export default {
       if (this.isAdmin) {
         // 订阅报修订单提醒
         // #ifdef MP-WEIXIN
-        wx.requestSubscribeMessage({
-          tmplIds: ['4Lnbo47VBu7woS0m0O8UjZ-7TBozETC4Mr5tdkwJ4v4'],
+        uni.requestSubscribeMessage({
+          tmplIds: ['W26m5tVAkKPgJUWQVMKPz0zGY8Vjg9hGvJnj6sBq1B8'],
         })
         // #endif
       }
@@ -170,7 +152,7 @@ page {
 }
 </style>
 <style lang="scss" scoped>
-@import '/src/common/repair.scss';
+@import '@/common/repair.scss';
 
 .ad-banner {
   view {

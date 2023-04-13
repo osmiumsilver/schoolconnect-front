@@ -81,10 +81,8 @@ export default {
   },
   methods: {
     applyStatus(status) {
-      this.applyStatusText = Number(status) === 0 ? '正在等待处理' :
-          Number(status) === 1 ? '正在处理中' : '已完成'
-      this.applyStatusColor = Number(status) === 0 ? '#e43d33' :
-          Number(status) === 1 ? '#f3a73f' : '#18bc37'
+      this.applyStatusText = Number(status) === 0 ? '正在等待处理' : Number(status) === 1 ?  '已完成' : '情况未知'
+      this.applyStatusColor = Number(status) === 0 ? '#e43d33' : Number(status) === 1 ? '#18bc37' : '#f3a73f'
     },
     // 撤销申请
     cancelApply() {
