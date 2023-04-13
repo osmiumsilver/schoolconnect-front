@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const path = require("path");
 const plugins = []
 
 if (process.env.UNI_OPT_TREESHAKINGNG) {
