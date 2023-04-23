@@ -15,7 +15,7 @@
           选择学期
         </view>
         <view class="action">
-          <term-picker @confirm="confirmClick" @semester="semesterClick" @year="yearClick"></term-picker>
+          <term-picker @semester="semesterClick" @year="yearClick"></term-picker>
         </view>
       </view>
     </view>
@@ -44,7 +44,7 @@
           </view>
           <view class="flex-sub text-right">
             <button class="cu-btn bg-orange-1 round shadow sm"
-                    @click="detailGrade(item.id,item.year,item.semester,item.courseName)">成绩：{{ item.grade }}
+                    @click="detailGrade(item)">成绩：{{ item.grade }}
             </button>
           </view>
         </view>
@@ -93,10 +93,9 @@ export default {
         userId: uni.getStorageSync("user_info").employeeId
       }, res => {
         if (res.code == 200) {
-          const gradeLength = res.data.length
-          if (gradeLength) {
+          if (res.data.length) {
             this.gradeList = res.data
-            this.choFlag = new Array(gradeLength).fill(true)
+            this.choFlag = new Array(res.data.length).fill(true)
             this.calcu()
           }
         }

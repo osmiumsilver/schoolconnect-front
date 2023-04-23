@@ -1,4 +1,5 @@
 export let rootUrl = 'http://100.100.17.107';
+export let fileUrl = 'http://100.100.17.107:8080/api/images/';
 export const formatNumber = n => {
     n = n.toString()
     return n[1] ? n : '0' + n
@@ -42,7 +43,37 @@ export function wechatLogin(callback) {
     })
 }
 
+export function getToken(callback){
+    uni.request({
+        url: rootUrl + '/auth/token',
+        method: 'POST',
+        header: {
+            Authorization: "Basic " + BasicAuth,
+            'X-Requested-With': "XMLHttpRequest"
+        },
+        data: {
+            postData
+        },
+        success: res => {
+            if (res) {
+                if (res.data.code == 200) {
+                    return typeof successres == "function" && successres(res);
+                } else {
+                    console.log("【SError】request.token : ", res)
+                    return typeof failres == "function" && failres(res)
+                }
+            }
 
+        },
+        fail: (res) => {
+            console.log("【Error】request.token : ", res)
+            return typeof failres == "function" && failres(res)
+
+        },
+        complete() {
+        }
+    })
+}
 export function noaccess() {
     uni.showModal({
         title: '提示',
@@ -155,4 +186,8 @@ export function getSchoolToken(postData, BasicAuth, successres, failres) {
         complete() {
         }
     })
+}
+
+export function uuid() {
+    return Math.random().toString(16).slice(2);
 }

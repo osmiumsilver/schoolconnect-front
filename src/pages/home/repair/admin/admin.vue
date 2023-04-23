@@ -57,6 +57,7 @@ import mixin from '@/mixins/mixin.js'
 import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
 
 export default {
+
   mixins: [mixin, search_empty_message_mixin],
   data() {
     return {

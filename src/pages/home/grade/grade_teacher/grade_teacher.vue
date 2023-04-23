@@ -12,8 +12,17 @@
 
 <script>
 export default {
-  name: "grade_teacher.vue"
+  name: "grade_teacher.vue",
+    data()
+    {
+
+    },
+    methods:
+        {
+
+        },
 }
+
 </script>
 
 <style scoped>

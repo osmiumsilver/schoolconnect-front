@@ -64,14 +64,14 @@
 </template>
 
 <script>
-
+import mixin from '@/mixins/checkbox_menu'
+import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
 export default {
+    mixins: [mixin, search_empty_message_mixin], // 引入可复用的代码
   data() {
     return {
       showButtons: false,
       reviewList: [],
-      choFlag: [],
-      emptyType: "search",
       emptyMsg: "您暂时没有需要审核的信息",
     }
   },
@@ -85,7 +85,7 @@ export default {
       let getData = {
         userId: uni.getStorageSync("user_info").employeeId
       }
-      this.$reqs(":8081/user/info/review", "GET", getData, res => {
+      this.$reqs(":8081/admin/user/info/review", "GET", getData, res => {
 
         if (res.code == 200) {
           const itemLength = res.data.length
@@ -134,9 +134,6 @@ export default {
           })
     },
     // 是否选中
-    choChange: function (index) {
-      this.choFlag[index] = !this.choFlag[index]
-    },
 
     reviewApproveOrDiscard: function (ApproveOrDiscard) {
 
@@ -162,7 +159,7 @@ export default {
         confirmText: '是',
         complete: (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/user/info/review", "PUT", postData, res => {
+            this.$reqs(":8081/admin/user/info/review", "PUT", postData, res => {
               if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',

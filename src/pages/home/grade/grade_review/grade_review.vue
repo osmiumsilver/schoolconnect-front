@@ -191,7 +191,7 @@ export default {
         confirmText: '是',
         complete: (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/user/info/review", "PUT", postData, res => {
+            this.$reqs(":8081/admin/user/info/review", "PUT", postData, res => {
               if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',

@@ -68,3 +68,7 @@
     background-color: #ffdad4;
     color: #fff;
 }
+.bg-custom-1{
+    background:linear-gradient(to bottom right, #b36f3e, #00000054);
+    color: #fff;
+}

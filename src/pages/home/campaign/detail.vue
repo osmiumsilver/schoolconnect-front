@@ -38,9 +38,16 @@
                     <text>{{ campaignDetail.campaignTime }}</text>
                 </view>
             </view>
+            <view class="u-block">
+                <u-album :urls="photoList1"></u-album>
+            </view>
             <view class="footer-view">
                 <view v-if="!(campaignDetail.campaignStatus === 2)" class="actions-item" @click="callApplyPhone">
                     <text>一键联系</text>
+                </view>
+                <view v-if="(campaignDetail.campaignStatus === 0 && isAdmin)" class="actions-item"
+                      @click="editCampaign(campaignDetail)">
+                    <text>编辑</text>
                 </view>
                 <!--                已参加 未签到 活动已经开始-->
                 <view v-if="(participated && !checkedIn && campaignDetail.campaignStatus === 1)"
@@ -97,7 +104,7 @@
                                 :src="item.pictureUrl ? item.pictureUrl : 'https://iknow-pic.cdn.bcebos.com/32fa828ba61ea8d37b2e67bc910a304e251f587d?x-bce-process=image%2Fresize%2Cm_lfit%2Cw_600%2Ch_800%2Climit_1%2Fquality%2Cq_85%2Fformat%2Cf_auto'"
                                 class="u-avatar-item"></u-avatar>
                         <u-text v-if="item.name" :text='item.name'></u-text>
-                        <u-tag v-if="item.checkInStatus==1" text="已签到" plain size="mini" plainFill></u-tag>
+                        <u-tag v-if="item.checkInStatus==1" plain plainFill size="mini" text="已签到"></u-tag>
                     </view>
                 </view>
             </view>
@@ -107,9 +114,14 @@
 
 <script>
 
+import {fileUrl} from "@/utils/util";
+
 export default {
     data() {
         return {
+            timerId: '',
+            photoList1: [],
+            photoList: [],
             campaignDetail: null,
             yourContactPhone: '',
             participated: false,
@@ -122,8 +134,13 @@ export default {
         }
     },
     onLoad(options) {
+
         if (options.detail) {
             this.campaignDetail = JSON.parse(options.detail)
+            this.getPictures(this.campaignDetail.id, res => {
+
+                this.addPrefixURL(res)
+            })
             this.applyStatus(this.campaignDetail.campaignStatus)
 
         }
@@ -131,21 +148,54 @@ export default {
             this.isAdmin = JSON.parse(options.isAdmin)
         }
 
-        this.$reqs(":8081/campaign/attendee/campaign_status", "GET", {campaignId: this.campaignDetail.id}, res => {
-            if (res.code == 200 && res.data) {
-                this.myStatus = res.data
-                this.participated = res.data.amISignedUp
-                this.checkedIn = res.data.amICheckedIn
 
-
-            }
-        })
         this.getParticipantsList()
         this.getCampaignInfo()
 
-
+        this.timerId= setInterval(this.getParticipantsList, 5000);
+    },
+    onShow() {
+    },
+    onBackPress(options) {
+        clearInterval(this.timerId)
+    }
+    ,onHide() {
+        clearInterval(this.timerId)
+    }
+    ,
+    onUnload(){
+        clearInterval(this.timerId)
     },
     methods: {
+        addPrefixURL(list) {
+            if(list){
+            let output = []
+            for (let i = 0; i < list.length; i++) {
+                output.push(fileUrl + list[i].pictureUrl);
+            }
+            console.log(output)
+            this.photoList1 = output}
+        },
+        getPictures(campaignId, callback) {
+            this.$reqs(":8081/campaign/getpic", "GET", {campaignId: campaignId}, res => {
+                if (res.code == 200 && res.data) {
+                    this.photoList = res.data
+                    return callback(res.data)
+                }
+            })
+
+        },
+        checkMyStatus() {
+            this.$reqs(":8081/campaign/attendee/campaign_status", "GET", {campaignId: this.campaignDetail.id}, res => {
+                if (res.code == 200 && res.data) {
+                    this.myStatus = res.data
+                    this.participated = res.data.amISignedUp
+                    this.checkedIn = res.data.amICheckedIn
+
+
+                }
+            })
+        },
         getCampaignInfo() {
             this.$reqs(":8081/campaign/" + this.campaignDetail.id, "GET", {}, res => {
                 if (res.code == 200) {
@@ -159,6 +209,7 @@ export default {
                     this.participants = res.data
                 }
             })
+            this.checkMyStatus()
         }
         ,
         signUp() {
@@ -181,7 +232,6 @@ export default {
                             contactPhone: res.content
                         }, res => {
                             if (res.code == 200 && res.data == true) {
-
                                 wx.showToast({
                                     title: '报名成功',
                                     duration: 1000
@@ -194,6 +244,36 @@ export default {
                                         }
                                     })
                                     this.getParticipantsList()
+
+                                    uni.showModal({ //在回调里面使用showModel弹框调起第二个订阅界面
+                                        content: '想要订阅活动开始的通知吗？',
+                                        confirmColor: '#11ad03',
+                                        showCancel: true,
+                                        success: res => {
+                                            if (res.confirm) {
+                                                var that = this
+                                                uni.requestSubscribeMessage({
+                                                        tmplIds: ['wY3fwfbdveAROT3Z6erKhbP3OT0UPt2VrpihcloigEg'],
+                                                        complete(res) {
+                                                            if (res.errMsg == 'requestSubscribeMessage:ok') {
+                                                                that.$reqs(":8081/campaign/attendee/notification/subscription", "POST", {
+                                                                    campaignId: that.campaignDetail.id,
+                                                                    openid: uni.getStorageSync("openid")
+                                                                }, res => {
+                                                                    if (res.code == 200) {
+                                                                        console.log("ok")
+                                                                    }
+                                                                })
+                                                            }
+                                                        }
+                                                    }
+                                                )
+
+                                            }
+                                        }
+                                    })
+
+
                                 }, 1200)
                             } else
                                 wx.showToast({
@@ -215,14 +295,21 @@ export default {
                         if (res.confirm) {
                             this.$reqs(":8081/campaign/attendee" + "?userId=" + uni.getStorageSync("user_info").employeeId, "DELETE", this.myStatus.attendantId, res => {
                                 if (res.data == true) {
-                                    uni.showToast({
-                                        title: '已退出报名',
-                                        icon: 'success',
-                                        duration: 1000
+                                    this.$reqs(":8081/campaign/attendee/notification/subscription", "DELETE", {
+                                        campaignId: this.campaignDetail.id,
+                                        openid: uni.getStorageSync("openid")
+                                    }, res => {
+                                        if (res.code == 200) {
+                                            uni.showToast({
+                                                title: '已退出报名',
+                                                icon: 'success',
+                                                duration: 1000
+                                            })
+
+                                        }
                                     })
 
                                     setTimeout(() => {
-
                                         this.participated = false;
                                         this.getParticipantsList()
                                     }, 1200)
@@ -255,6 +342,25 @@ export default {
                                     this.$reqs(":8081/campaign", "PATCH", this.campaignDetail, res => {
                                         console.log(res);
                                         if (res.data == true) {
+                                            if (res.code == 200) {
+                                                this.$reqs(":8081/campaign/attendee/notification/send", "POST", this.campaignDetail.id, res => {
+                                                    if(res.code==200 && res.data ==true)
+                                                    {
+                                                        uni.showToast({
+                                                            title: '已发送通知',
+                                                            mask: false,
+                                                            duration: 1500
+                                                        });
+                                                    }
+
+                                                    if (res.code == 200 && res.data != true && res.data !=[]) {
+
+                                                    }
+
+                                                })
+                                            }
+
+
                                             uni.showToast({
                                                 title: '已修改为开始状态',
                                                 icon: 'success',
@@ -318,7 +424,7 @@ export default {
         }
         ,
         showParticipantsInfo(info) {
-            if(this.isAdmin===true) {
+            if (this.isAdmin === true) {
                 let str = "姓名：" + info.name + "\n" +
                     "工号：" + info.attendeeId + "\n" +
                     "联系方式：" + info.contactPhone + "\n" +
@@ -385,6 +491,13 @@ export default {
                 phoneNumber: this.campaignDetail.contactPhone
             })
         }
+        ,// 一键联系
+        editCampaign(e) {
+            console.log(e)
+            uni.navigateTo({
+                url: '/pages/home/campaign/publish?detail=' + JSON.stringify(e) + '&isAdmin=' + this.isAdmin + '&edit=true'
+            })
+        }
         ,
 // 一键复制
         copyApplyPhone() {
@@ -401,25 +514,27 @@ export default {
                             success: async (res) => {
 
                                 if (res.confirm) {
-                                    this.$reqs(":8081/campaign/attendee/check?" + "inOrOut=in&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
-                                        if (res.data == true) {
-                                            uni.showToast({
-                                                title: '签到成功！',
-                                                icon: 'success',
-                                                duration: 1000
-                                            })
-                                            setTimeout(() => {
-                                                this.checkedIn = true
-                                                this.getParticipantsList()
-                                            }, 1100)
-                                        } else {
-                                            uni.showToast({
-                                                title: '修改失败',
-                                                icon: 'error',
-                                                duration: 1000
-                                            })
-                                        }
-                                    })
+                                    if (this.myStatus) {
+                                        this.$reqs(":8081/campaign/attendee/check?" + "inOrOut=in&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
+                                            if (res.data == true) {
+                                                uni.showToast({
+                                                    title: '签到成功！',
+                                                    icon: 'success',
+                                                    duration: 1000
+                                                })
+                                                setTimeout(() => {
+                                                    this.checkedIn = true
+                                                    this.getParticipantsList()
+                                                }, 1100)
+                                            } else {
+                                                uni.showToast({
+                                                    title: '修改失败',
+                                                    icon: 'error',
+                                                    duration: 1000
+                                                })
+                                            }
+                                        })
+                                    }
 
 
                                 }

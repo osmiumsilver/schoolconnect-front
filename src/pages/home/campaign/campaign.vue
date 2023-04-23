@@ -219,11 +219,9 @@ export default {
             })
         },
 
-        // 点击活动进入活动详情页面
+        // 点击活动进入活动详情页面x
         navToDetailPage(e) {
-
-            const isAdmin = uni.getStorageSync("user_info").employeeId == e.campaignLauncher ? true : false;
-
+            const isAdmin = uni.getStorageSync("user_info").role === 0 ? true :  uni.getStorageSync("user_info").employeeId == e.campaignLauncher ? true : false;
             uni.navigateTo({
                 url: '/pages/home/campaign/detail?detail=' + JSON.stringify(e) + '&isAdmin=' + isAdmin
             })
@@ -280,35 +278,7 @@ page {
     background-color: #fff;
 }
 
-.search {
-    background: white;
-    display: flex;
-    align-items: center;
-}
 
-.search .avatar {
-    padding: 20rpx 20rpx 0 20rpx;
-}
-
-.search .avatar_r {
-    padding: 20rpx 20rpx 0 20rpx;
-    float: right;
-}
-
-.search .avatar image {
-    width: 50rpx;
-    height: 50rpx;
-    border-radius: 50%;
-    margin-right: 40rpx;
-}
-
-.search .avatar_r image {
-    width: 50rpx;
-    height: 50rpx;
-    border-radius: 50%;
-    margin-right: 40rpx;
-    margin-left: 530rpx;
-}
 
 .item {
     display: flex;

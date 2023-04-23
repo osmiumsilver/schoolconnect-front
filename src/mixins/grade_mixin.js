@@ -1,25 +1,39 @@
 import termPicker from '@/components/term-picker/term-picker'
-
+import moment from '@/utils/moment'
 export default {
     data() {
-        return {}
+        return {
+            yearArray: [],
+            termArray: [],
+            semester: "",
+            year: "",
+        }
     },
     components: {
         termPicker
     },
     methods: {
         // 查看详情分数
-        detailGrade: function (id) {
+        detailGrade: function (e) {
 
 
-
-            for (let i in res.data.detail_grade) {
-                str += res.data.detail_grade[i].xmblmc + '：' + res.data.detail_grade[i].xmcj +
-                    '\n'
-            }
             uni.showModal({
-                title: this.courseName + ' ' + this.name,
-                content: str.substring(0, str.length - 1),
+
+                title: e.courseName,
+                content:'分数ID:'+e.id+"\n"
+                    +'课程ID：'+e.id+"\n"
+                    +'课程名称:'+e.courseName+"\n"
+                    +'课程名称:'+e.courseName+"\n"
+                    +'课程成绩:'+e.grade+"\n"
+                    +'课程绩点:'+e.points+"\n"
+                    +'课程学分:'+e.credits+"\n"
+                    +'课程导入日期:'+moment(e.importDate).format('LLL')+"\n"
+                    +'学年:'+e.year+"\n"
+                    +'学期:'+e.semester+"\n"
+
+
+
+                ,
                 showCancel: false,
             })
         }
@@ -103,7 +117,16 @@ export default {
     confirmClick: function () {
         this.getGrade()
     },
-
+    chooseSemester: function (e) {
+        this.semester = e
+    },
+    chooseYear: function (e) {
+        this.year = e
+    },
+    coYearClick: function (yearArray, termArray) {
+        this.yearArray = yearArray
+        this.termArray = termArray
+    },
     choChange: function (index) { //是否选中
         this.choFlag[index] = !this.choFlag[index]
         this.calcu()

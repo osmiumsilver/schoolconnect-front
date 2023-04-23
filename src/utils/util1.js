@@ -123,3 +123,25 @@ export function cpVersion(v1, v2) {
     }
     return 0
 }
+
+export function timePicker (time, mode) {
+    const timeFormat = uni.$u.timeFormat
+    switch (mode) {
+        case 'datetime':
+            return timeFormat(time, 'yyyy-mm-dd hh:MM')
+        case 'date':
+            return timeFormat(time, 'yyyy-mm-dd')
+        case 'year-month':
+            return timeFormat(time, 'yyyy-mm')
+        case 'time':
+            return toast(time)
+        default:
+            return ''
+    }
+}
+export function formatTime(unixEpoch){
+    const d = new Date(unixEpoch);
+
+    return d.getFullYear() + "-" + ("00" + (d.getMonth() + 1)).slice(-2) + "-" + ("00" + d.getDate()).slice(-2) + " " + ("00" + d.getHours()).slice(-2) + ":" + ("00" + d.getMinutes()).slice(-2) + ":" + ("00" + d.getSeconds()).slice(-2)
+
+}

@@ -45,7 +45,7 @@
       <view class="list-head bg-blue-1">
       </view>
     </view>
-    <view>
+    <view v-if="uni.getStorageSync('user_info').role!=2">
 
       <u-button v-if="showButtons==true" class="section_3 uButton_CSr" @click="setToBeRevision(true)"> 等待审核
       </u-button>
@@ -117,7 +117,7 @@ setToBeRevision(){
     confirmText: '是',
     complete: (res) => {
       if (res.confirm) {
-        this.$reqs(":8081/user/info/review/set_to_be_review", "PUT", postData, res => {
+        this.$reqs(":8081/admin/user/info/review/set_to_be_review", "PUT", postData, res => {
           if (res.code == 200) {
             uni.showToast({
               title: '保存成功',
@@ -159,7 +159,7 @@ setToBeRevision(){
         confirmText: '是',
         complete: (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/user/info/review", "PUT", postData, res => {
+            this.$reqs(":8081/admin/user/info/review", "PUT", postData, res => {
               if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',

@@ -21,10 +21,12 @@ Vue.component('cu-custom', cuCustom)
 Vue.prototype.$store = store
 
 import * as a from "@/utils/util.js"
+import * as b from "@/utils/moment"
 
 Vue.prototype.$reqs = a.reqs
 Vue.prototype.$noaccess = a.noaccess
 Vue.prototype.$formatNumber = a.formatNumber
+Vue.prototype.$moment = b
 
 Vue.config.productionTip = false
 

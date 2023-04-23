@@ -4,7 +4,7 @@
     <option name="languageLevel" value="ES6" />
   </component>
   <component name="WebPackConfiguration">
-    <option name="mode" value="MANUAL" />
+    <option name="mode" value="AUTO" />
     <option name="path" value="$PROJECT_DIR$/webstorm.config.js" />
   </component>
 </project>

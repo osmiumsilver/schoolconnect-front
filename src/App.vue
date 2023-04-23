@@ -48,6 +48,13 @@ export default {
     }
 
   },
+    onLoad:function (){
+        this.runTimeInfo = {
+            path: this.route,
+            starTime: new Date().valueOf(),
+        }
+        onLoad && onLoad.call(this, res)
+    },
   onShow: function () {
       wechatLogin();
     console.log('App Show')
@@ -212,10 +219,11 @@ text {
  //colorui三个css
 @import "colorui/main.css";
 @import "colorui/icon.css";
-/* 引入动画 */
 @import "colorui/animation.css";
+ //自建彩色css
 @import "common/colorui-color.css";
-
+ //hello-uview框架直接应用
+@import "common/uview-demo.scss";
 /* 列表展示 */
 .list-container {
   border-radius: 20rpx;

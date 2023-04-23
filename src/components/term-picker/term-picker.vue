@@ -45,10 +45,8 @@
             return {
                 modalName: "",
                 yearArray: [],
-                termArray: [{
-                    title: "全部学期",
-                    value: "",
-                }, {
+                disableall: false,
+                termArray: [ {
                     title: "第1学期",
                     value: "1",
                 }, {
@@ -68,14 +66,34 @@
             }
         },
         created() {
+
             this.yearArray = this.getYearArray()
+            this.$emit("disableall",this.disableall)
+            if(this.disableall==false)
+            {
+                this.pushAll()
+            }
             this.$emit("year", this.year);
             this.$emit("semester", this.semester);
             this.$emit("yearArray", this.yearArray,this.termArray);
+
+
         },
         methods: {
+            pushAll()
+            {
+              this.termArray.push({
+                  title: "全部学期",
+                  value: "",
+              },)
+            },
             getYearArray: function() {
                 let yearArray = []
+                if(this.disableall==false){
+                    yearArray.push({
+                        title: "全部学年",
+                        value: "",
+                    })}
                 let thisYear = new Date().getFullYear()
                 for (let i = thisYear - 3; i < thisYear + 1; i++) {
                     let tempYear = parseInt(i) + '-' + parseInt(i + 1)
@@ -84,10 +102,7 @@
                         value: i,
                     })
                 }
-                yearArray.push({
-                    title: "全部学年",
-                    value: "",
-                })
+
                 return yearArray.reverse()
             },
             yearClick(index) {

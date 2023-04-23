@@ -39,9 +39,14 @@
     {
       "path": "pages/home/course/course",
       "style": {}
-    },
-    {
-      "path": "pages/home/course/manage/manage",
+    }, {
+      "path": "pages/home/admin/schedule/setup",
+      "style": {}
+    }, {
+      "path": "pages/home/admin/course/course_info_add",
+      "style": {}
+    }, {
+      "path": "pages/home/admin/user/user",
       "style": {}
     },
     {
@@ -93,9 +98,25 @@
       }
     },
     {
-      "path": "pages/home/info/info_review",
+      "path": "pages/home/admin/info_review",
       "style": {
         "navigationBarTitleText": "信息审核",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },{
+      "path": "pages/home/admin/status_change",
+      "style": {
+        "navigationBarTitleText": "信息审核",
+        "navigationBarTextStyle": "black",
+        "navigationBarBackgroundColor": "#ffffff",
+        "enablePullDownRefresh": false
+      }
+    },  {
+      "path": "pages/home/admin/setpass",
+      "style": {
+        "navigationBarTitleText": "密码修改",
         "navigationBarTextStyle": "black",
         "navigationBarBackgroundColor": "#ffffff",
         "enablePullDownRefresh": false
