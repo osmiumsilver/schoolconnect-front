@@ -174,14 +174,14 @@ export default {
             }
         },
         getBanner() {
-            this.$reqs(":8081/campaign/banner", "GET", {}, res => {
+            this.$reqs("/campaign/banner", "GET", {}, res => {
                 if (res.code == 200) {
                     this.banner = res.data
                 }
             });
         },
         getData(status, callback) {
-            this.$reqs(":8081/campaign", "GET", {status: status}, res => {
+            this.$reqs("/campaign", "GET", {status: status}, res => {
                 if (res.code == 200) {
                     this.campaignList = res.data
                 }
@@ -211,7 +211,7 @@ export default {
         },
         fetchCampaignsISignedUp(status) {
             this.campaignList = []
-            this.$reqs(":8081/campaign/isigned", "GET", {status: status}, res => {
+            this.$reqs("/campaign/isigned", "GET", {status: status}, res => {
                 if (res.code == 200) {
 
                     this.campaignList = res.data
@@ -229,7 +229,7 @@ export default {
 
         //点击搜索
         click_search: function (search) {
-            this.$reqs(":8081/campaign/search", "GET", {name: search}, res => {
+            this.$reqs("/campaign/search", "GET", {name: search}, res => {
                 if (res.code == 200) {
                     this.campaignList = []
                     this.campaignList = res.data
@@ -237,7 +237,7 @@ export default {
             })
         },
         fetchCampaignsILaunched() {
-            this.$reqs(":8081/campaign/my", "GET", {}, res => {
+            this.$reqs("/campaign/my", "GET", {}, res => {
                 if (res.code == 200) {
                     this.campaignList = []
                     this.campaignList = res.data

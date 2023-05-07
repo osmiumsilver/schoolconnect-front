@@ -7,6 +7,7 @@ export default {
             termArray: [],
             semester: "",
             year: "",
+            choFlag:[],
         }
     },
     components: {
@@ -26,7 +27,7 @@ export default {
                     +'课程名称:'+e.courseName+"\n"
                     +'课程成绩:'+e.grade+"\n"
                     +'课程绩点:'+e.points+"\n"
-                    +'课程学分:'+e.credits+"\n"
+                    +'课程学分:'+e.courseCredits+"\n"
                     +'课程导入日期:'+moment(e.importDate).format('LLL')+"\n"
                     +'学年:'+e.year+"\n"
                     +'学期:'+e.semester+"\n"
@@ -50,30 +51,30 @@ export default {
             this.calcPoints(i);
             if (this.choFlag[i]) {
                 count++;
-                sumCredits += parseFloat(this.gradeList[i].credits);
+                sumCredits += parseFloat(this.gradeList[i].courseCredits);
                 switch (this.gradeList[i].grade) {
                     case '优秀':
-                        vWeights += 90 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 90 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     case '良好':
-                        vWeights += 85 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 85 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     case '中等':
-                        vWeights += 75 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 75 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     case '合格':
-                        vWeights += 80 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 80 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     case '及格':
-                        vWeights += 60 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 60 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     case '不及格':
                     case '不合格':
-                        vWeights += 50 * parseFloat(this.gradeList[i].credits);
+                        vWeights += 50 * parseFloat(this.gradeList[i].courseCredits);
                         break;
                     default:
                         vWeights += parseFloat(this.gradeList[i].grade) * parseFloat(this.gradeList[i]
-                            .credits);
+                            .courseCredits);
                 }
 
                 vCredits += parseFloat(this.gradeList[i].points) * parseFloat(this.gradeList[i].points);
@@ -116,12 +117,6 @@ export default {
     },
     confirmClick: function () {
         this.getGrade()
-    },
-    chooseSemester: function (e) {
-        this.semester = e
-    },
-    chooseYear: function (e) {
-        this.year = e
     },
     coYearClick: function (yearArray, termArray) {
         this.yearArray = yearArray

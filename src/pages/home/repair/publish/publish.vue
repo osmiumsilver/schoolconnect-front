@@ -117,7 +117,7 @@ export default {
           title: '正在提交...',
           mask: true
         })
-        this.$reqs(":8081/repair", "POST", [this.formData], res => {
+        this.$reqs("/repair", "POST", [this.formData], res => {
           console.log(res);
           if (res.data == true) {
             wx.showToast({

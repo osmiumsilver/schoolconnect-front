@@ -186,7 +186,7 @@ export default {
             this.role = uni.getStorageSync("user_info").role
             if (!this.swiperList.length) {
                 uni.request({
-                    url: rootUrl + ':8081/ui/carousel',
+                    url: rootUrl + '/ui/carousel',
                     method: 'GET',
                     success: (res) => {
                         if (res.statusCode == 200)

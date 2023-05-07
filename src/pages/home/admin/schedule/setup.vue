@@ -216,7 +216,7 @@ export default {
             }
         },
         getCourse() {
-            this.$reqs(":8081/admin/course/", "GET", {}, res => {
+            this.$reqs("/admin/course/", "GET", {}, res => {
                 if (res.code == 200) {
                     this.searchList = res.data
                    this.courseItem.courseNo= this.searchList[0].courseNo
@@ -324,7 +324,7 @@ export default {
                 showCancel: true,
                 success: res => {
                     if (res.confirm) {
-                        this.$reqs(":8081/schedule/class", "POST", this.courseItem, res => {
+                        this.$reqs("/schedule/class", "POST", this.courseItem, res => {
                             if (res.code == 200 && res.data == true) {
                                 uni.showModal({
                                     content: "添加成功",

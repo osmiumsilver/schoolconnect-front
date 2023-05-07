@@ -77,7 +77,7 @@ export default {
      * */
     async getApplyData(status) {
       this.applyData = []
-      this.$reqs(":8081/repair", "GET", {status: status}, res => {
+      this.$reqs("/repair", "GET", {status: status}, res => {
         console.log(res);
         if (res.code == 200) {
           this.applyData = res.data
@@ -131,7 +131,7 @@ export default {
         content: '是否处理完成该订单?',
         success: async (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/repair", "PUT", [{status: 1, id: event.id}], res => {
+            this.$reqs("/repair", "PUT", [{status: 1, id: event.id}], res => {
               console.log(res);
               if (res.code == 200 && res.data == true) {
                 this.getApplyData(this.tabsIndex)
@@ -152,7 +152,7 @@ export default {
         content: '是否删除该订单?',
         success: async (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/repair", "PUT", [{status:2,id:event.id}], res => {
+            this.$reqs("/repair", "PUT", [{status:2,id:event.id}], res => {
               console.log(res);
               if (res.code == 200 && res.data == true) {
                 this.getApplyData(this.tabsIndex)

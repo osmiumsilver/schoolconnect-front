@@ -177,7 +177,7 @@ export default {
             this.photoList1 = output}
         },
         getPictures(campaignId, callback) {
-            this.$reqs(":8081/campaign/getpic", "GET", {campaignId: campaignId}, res => {
+            this.$reqs("/campaign/getpic", "GET", {campaignId: campaignId}, res => {
                 if (res.code == 200 && res.data) {
                     this.photoList = res.data
                     return callback(res.data)
@@ -186,7 +186,7 @@ export default {
 
         },
         checkMyStatus() {
-            this.$reqs(":8081/campaign/attendee/campaign_status", "GET", {campaignId: this.campaignDetail.id}, res => {
+            this.$reqs("/campaign/attendee/campaign_status", "GET", {campaignId: this.campaignDetail.id}, res => {
                 if (res.code == 200 && res.data) {
                     this.myStatus = res.data
                     this.participated = res.data.amISignedUp
@@ -197,14 +197,14 @@ export default {
             })
         },
         getCampaignInfo() {
-            this.$reqs(":8081/campaign/" + this.campaignDetail.id, "GET", {}, res => {
+            this.$reqs("/campaign/" + this.campaignDetail.id, "GET", {}, res => {
                 if (res.code == 200) {
                     this.campaignDetail = res.data
                 }
             })
         },
         getParticipantsList() {
-            this.$reqs(":8081/campaign/attendee/list_attendees", "GET", {campaignId: this.campaignDetail.id}, res => {
+            this.$reqs("/campaign/attendee/list_attendees", "GET", {campaignId: this.campaignDetail.id}, res => {
                 if (res.code == 200) {
                     this.participants = res.data
                 }
@@ -226,7 +226,7 @@ export default {
                             })
                             return
                         }
-                        this.$reqs(":8081/campaign/attendee", "POST", {
+                        this.$reqs("/campaign/attendee", "POST", {
                             campaignId: this.campaignDetail.id,
                             attendeeId: uni.getStorageSync("user_info").employeeId,
                             contactPhone: res.content
@@ -237,7 +237,7 @@ export default {
                                     duration: 1000
                                 })
                                 setTimeout(() => {
-                                    this.$reqs(":8081/campaign/" + this.campaignDetail.id, "GET", {}, res => {
+                                    this.$reqs("/campaign/" + this.campaignDetail.id, "GET", {}, res => {
                                         if (res.code == 200) {
                                             this.participated = true;
                                             this.campaignDetail = res.data
@@ -256,7 +256,7 @@ export default {
                                                         tmplIds: ['wY3fwfbdveAROT3Z6erKhbP3OT0UPt2VrpihcloigEg'],
                                                         complete(res) {
                                                             if (res.errMsg == 'requestSubscribeMessage:ok') {
-                                                                that.$reqs(":8081/campaign/attendee/notification/subscription", "POST", {
+                                                                that.$reqs("/campaign/attendee/notification/subscription", "POST", {
                                                                     campaignId: that.campaignDetail.id,
                                                                     openid: uni.getStorageSync("openid")
                                                                 }, res => {
@@ -293,9 +293,9 @@ export default {
                     content: '是否取消报名?',
                     success: async (res) => {
                         if (res.confirm) {
-                            this.$reqs(":8081/campaign/attendee" + "?userId=" + uni.getStorageSync("user_info").employeeId, "DELETE", this.myStatus.attendantId, res => {
+                            this.$reqs("/campaign/attendee" + "?userId=" + uni.getStorageSync("user_info").employeeId, "DELETE", this.myStatus.attendantId, res => {
                                 if (res.data == true) {
-                                    this.$reqs(":8081/campaign/attendee/notification/subscription", "DELETE", {
+                                    this.$reqs("/campaign/attendee/notification/subscription", "DELETE", {
                                         campaignId: this.campaignDetail.id,
                                         openid: uni.getStorageSync("openid")
                                     }, res => {
@@ -339,11 +339,11 @@ export default {
                             success: async (res) => {
                                 if (res.confirm) {
                                     this.campaignDetail.campaignStatus = status
-                                    this.$reqs(":8081/campaign", "PATCH", this.campaignDetail, res => {
+                                    this.$reqs("/campaign", "PATCH", this.campaignDetail, res => {
                                         console.log(res);
                                         if (res.data == true) {
                                             if (res.code == 200) {
-                                                this.$reqs(":8081/campaign/attendee/notification/send", "POST", this.campaignDetail.id, res => {
+                                                this.$reqs("/campaign/attendee/notification/send", "POST", this.campaignDetail.id, res => {
                                                     if(res.code==200 && res.data ==true)
                                                     {
                                                         uni.showToast({
@@ -394,7 +394,7 @@ export default {
                             success: async (res) => {
                                 if (res.confirm) {
                                     this.campaignDetail.campaignStatus = status
-                                    this.$reqs(":8081/campaign", "PATCH", this.campaignDetail, res => {
+                                    this.$reqs("/campaign", "PATCH", this.campaignDetail, res => {
 
                                         if (res.data == true) {
                                             uni.showToast({
@@ -458,7 +458,7 @@ export default {
                     content: '是否删除该活动?',
                     success: async (res) => {
                         if (res.confirm) {
-                            this.$reqs(":8081/campaign", "DELETE", this.campaignDetail, res => {
+                            this.$reqs("/campaign", "DELETE", this.campaignDetail, res => {
                                 console.log(res);
                                 if (res.data == true) {
                                     uni.showToast({
@@ -515,7 +515,7 @@ export default {
 
                                 if (res.confirm) {
                                     if (this.myStatus) {
-                                        this.$reqs(":8081/campaign/attendee/check?" + "inOrOut=in&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
+                                        this.$reqs("/campaign/attendee/check?" + "inOrOut=in&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
                                             if (res.data == true) {
                                                 uni.showToast({
                                                     title: '签到成功！',
@@ -548,7 +548,7 @@ export default {
                             content: '确认签退?',
                             success: async (res) => {
                                 if (res.confirm) {
-                                    this.$reqs(":8081/campaign/attendee/check?" + "inOrOut=out&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
+                                    this.$reqs("/campaign/attendee/check?" + "inOrOut=out&attendantId=" + this.myStatus.attendantId, "PATCH", {}, res => {
                                         console.log(res);
                                         if (res.data == true) {
                                             uni.showToast({

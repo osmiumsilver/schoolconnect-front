@@ -37,7 +37,8 @@
         </view>
         <view class="list-subitem margin-top-sm">
           <view class="flex-sub text-left">
-            学分：{{ item.credits }}
+              <text class="text-bold" v-if="item.awaitingRevision==1">正在等待审核\n</text>
+              学分：{{ item.courseCredits }}
           </view>
           <view class="flex-sub text-center">
             绩点：{{ item.points }}
@@ -87,7 +88,7 @@ export default {
   methods: {
     getGrade: function () {
       this.gradeList = [];
-      this.$reqs(":8081/grade/get_my_grade", "GET", {
+      this.$reqs("/grade/get_my_grade", "GET", {
         year: this.year,
         semester: this.semester,
         userId: uni.getStorageSync("user_info").employeeId
@@ -123,7 +124,7 @@ export default {
         this.calcPoints(i);
         if (this.choFlag[i]) {
           count++;
-          sumCredits += parseFloat(this.gradeList[i].credits);
+          sumCredits += parseFloat(this.gradeList[i].courseCredits);
 
           sumPoints += parseFloat(this.gradeList[i].points);
         }

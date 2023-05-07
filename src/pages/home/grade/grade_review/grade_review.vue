@@ -9,79 +9,40 @@
         成绩修改审核
       </view>
     </cu-custom>
-    <view class="head">
-
-      <view class="header-wrap">
-
-        <view class="index-header">
-
-          <text class="address" v-if="leftWords">{{leftWords}}</text>
-
-          <view class="input-wrap" v-if="input">
-
-            <input type="text"
-
-                   placeholder="请输入搜索"
-
-                   v-model="value"
-
-                   @change="inputChange"/>
-
-            <text class="iconfont iconfangdajing"></text>
-
-          </view>
-
-          <view class="map-wrap"
-
-                v-if="rightWords||rightIcon"
-
-                @click="rightClick">
-
-            <text class="iconfont" :class="rightIcon"></text>
-
-            <text>{{rightWords}}</text>
-
-          </view>
-
-        </view>
-
-      </view>
-
-      <view class="blank"></view>
-
-    </view>
     <!-- 主体展示页面 -->
-    <view class="animation-slide-bottom margin list-container" v-if="reviewList.length">
+    <view class="animation-slide-bottom margin list-container" v-if="gradeList.length">
       <view class="list-head bg-blue-1">
         <view class="">
-          学籍查看详情
+          成绩审核
         </view>
         <view class="">
           选中
         </view>
       </view>
-      <view class="list-item text-black" v-for='(item, index) in reviewList' :key='index'
-            :class="index%2?'bg-gray':'bg-white'">
-        <view class="list-subitem">
-          <text class="text-bold">{{ item.name }}</text>
-          <switch class="cyan sm" @click="choChange(index)"></switch>
+        <view v-for='(item, index) in gradeList' :key='index' :class="index%2?'bg-gray':'bg-white'"
+              class="list-item text-black">
+            <view class="list-subitem">
+                <text class="text-bold"> 姓名：{{ item.name }}</text>
+                <switch :checked='choFlag[index]' class="cyan sm" @click="choChange(index)"></switch>
+            </view>
+            <view class="list-subitem margin-top-sm">
+                <view class="flex-sub text-left">
+                    <text class="text-bold"> 课程：{{item.courseName}}\n</text>
+                    学分：{{ item.courseCredits }}
+                </view>
+                <view class="flex-sub text-center">
+                    绩点：{{ item.points }}
+                </view>
+
+                <view class="flex-sub text-right">
+                    <button class="cu-btn bg-orange-1 round shadow sm"
+                            @click="detailGrade(item)">成绩：{{ item.grade }}
+                    </button>
+
+                </view>
+            </view>
         </view>
-        <view class="list-subitem margin-top-sm">
-          <view class="flex-sub text-left">
-            学号：{{ item.employeeId }}
-          </view>
-          <view class="flex-sub text-center">
-            班级：{{ item.classNo }}
-          </view>
-          <view class="flex-sub text-right">
-            <button class="cu-btn bg-orange-1 round shadow sm"
-                    @click="detailInfo(item.employeeId)">点击查看详情
-            </button>
-          </view>
-        </view>
-      </view>
-      <view class="list-head bg-blue-1">
-      </view>
+
     </view>
     <view>
 
@@ -106,12 +67,16 @@
 
 <script>
 
+import mixin from "@/mixins/grade_mixin";
+import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
+
 export default {
+    mixins: [mixin, search_empty_message_mixin], // 引入可复用的代码
   data() {
     return {
       name: "grade_review.vue",
       showButtons: false,
-      reviewList: [],
+      gradeList: [],
       choFlag: [],
       emptyType: "search",
       emptyMsg: "您暂时没有需要审核的信息",
@@ -124,15 +89,14 @@ export default {
   methods: {
 
     getInfoReadyToBeReviewed() {
-
-      this.$reqs(":8081/grade/review", "GET", {   userId: uni.getStorageSync("user_info").employeeId}, res => {
-
-        if (res.code == 200) {
+        this.gradeList =''
+      this.$reqs("/grade/review", "GET", {   userId: uni.getStorageSync("user_info").employeeId}, res => {
+        if (res.code == 200 && res.data) {
           const itemLength = res.data.length
 
           if (itemLength) {
             this.showButtons = true
-            this.reviewList = res.data
+            this.gradeList = res.data
             this.choFlag = new Array(itemLength).fill(false)
           }
         }
@@ -140,8 +104,7 @@ export default {
     },
     // 查看详情
     detailInfo: function (userId) {
-
-      this.$reqs(':8081/user/info', 'GET', {userId: userId}
+      this.$reqs('/user/info', 'GET', {userId: userId}
           ,res => {
             if (res.code == 200) {
               let str = ''
@@ -170,14 +133,14 @@ export default {
     reviewApproveOrDiscard: function (ApproveOrDiscard) {
 
       let postData = [];
-      for (const items in this.reviewList) {
+      for (const items in this.gradeList) {
         if (this.choFlag[items]) {
           let myStuff = {}
-          myStuff['id'] = this.reviewList[items].id
+          myStuff['id'] = this.gradeList[items].id
           if (!ApproveOrDiscard)
-            myStuff['requiredChanging'] = 1
+            myStuff['awaitingRevision'] = 1
           else
-            myStuff['requiredChanging'] = 0
+            myStuff['awaitingRevision'] = 0
 
           postData.push(myStuff)
         }
@@ -191,14 +154,16 @@ export default {
         confirmText: '是',
         complete: (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/admin/user/info/review", "PUT", postData, res => {
+            this.$reqs("/grade/review", "PATCH", postData, res => {
               if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',
-                  mask: false,
-                  duration: 1500
+                  duration: 500
                 });
-                this.getInfoReadyToBeReviewed()
+                  setTimeout(() => {
+                      this.getInfoReadyToBeReviewed()
+                  }, 1100)
+
               }
 
             })

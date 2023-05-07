@@ -178,7 +178,7 @@
             </view>
         </view>
         <!-- 学期选择 -->
-        <term-picker pickerType="course" @semester="chooseSemester" @year="chooseYear"
+        <term-picker pickerType="course" @semester="semesterClick" @year="yearClick"
                      @yearArray="coYearClick"></term-picker>
         <view :class="modalName=='SemesterModal'?'show':''" class="cu-modal">
             <view class="cu-dialog">
@@ -288,7 +288,7 @@ export default {
     methods: {
         getCourseAdmin(courseId) {
             this.modalName = null
-            this.$reqs(":8081/schedule/class", "GET", {
+            this.$reqs("/schedule/class", "GET", {
                 year: this.year,
                 semester: this.semester,
                 classNo: this.searchModel
@@ -298,7 +298,7 @@ export default {
             })
         },
         init: function () {
-            this.$reqs(":8081/startdate", "GET", {}, res => {
+            this.$reqs("/startdate", "GET", {}, res => {
 
                 if (res.code == 200) {
                     this.startDayList = res.data;
@@ -306,7 +306,7 @@ export default {
             })
             this.bacimg = uni.getStorageSync('bacimg') ? uni.getStorageSync('bacimg') : this.baseImg
             const courseList = uni.getStorageSync('course_list')
-            // this.$reqs(":8081/schedule/class", 'GET', {
+            // this.$reqs("/schedule/class", 'GET', {
             //   'classNo': uni.getStorageSync('user_info').classNo,
             //   'year': this.year,
             //   'semester': this.semester
@@ -361,10 +361,10 @@ export default {
             return year_array.reverse()
         },
 
-        chooseSemester: function (e) {
+        semesterClick: function (e) {
             this.semester = e
         },
-        chooseYear: function (e) {
+        yearClick: function (e) {
             this.year = e
         },
         coYearClick: function (yearArray, termArray) {
@@ -407,7 +407,7 @@ export default {
         // 获取课表
         getCourse: function () {
             this.modalName = null
-            this.$reqs(":8081/schedule/class", "GET", {
+            this.$reqs("/schedule/class", "GET", {
                 year: this.year,
                 semester: this.semester,
                 classNo: uni.getStorageSync('user_info').classNo
@@ -509,7 +509,7 @@ export default {
                                 content: '是否确认删除？',
                                 success: res => {
                                     if (res.confirm) {
-this.$reqs(":8081/schedule/class", "DELETE", this.courseList[index], res => {
+this.$reqs("/schedule/class", "DELETE", this.courseList[index], res => {
     uni.showToast({
         title: '删除成功',
         mask: false,

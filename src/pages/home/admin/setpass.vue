@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         getUser() {
-            this.$reqs(':8081/admin/user/info', 'GET', {userId: this.searchModel}
+            this.$reqs('/admin/user/info', 'GET', {userId: this.searchModel}
                 , res => {
                     if (res.code == 200 && res.data)
                         this.userList = res.data
@@ -98,7 +98,7 @@ export default {
         },
     getUserWithNoPassword() {
         this.userList = []
-        this.$reqs(":8081/admin/user/info/nopassword", "GET", {}, res => {
+        this.$reqs("/admin/user/info/nopassword", "GET", {}, res => {
             if (res.code == 200 && res.data) {
                 this.userList = res.data
                 this.choFlag = new Array(res.data.length).fill(true)
@@ -125,7 +125,7 @@ export default {
             confirmText: '是',
             complete: (res) => {
                 if (res.confirm) {
-                    this.$reqs(":8081/admin/user/info/setdefaultpass", "POST", newList, res => {
+                    this.$reqs("/admin/user/info/setdefaultpass", "POST", newList, res => {
                         if (res.code == 200 && res.data) {
                             Tips.success("成功", 1000)
                             this.getUserWithNoPassword();

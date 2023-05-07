@@ -66,7 +66,7 @@ export default {
                     content: '确认修改?',
                     success: async (res) => {
                         if (res.confirm) {
-                            this.$reqs(":8081/user/info/change", "POST", {
+                            this.$reqs("/user/info/change", "POST", {
                                 employeeId: this.username,
                                 oldPass: this.form.oldPassword,
                                 newPass: this.form.newPassword

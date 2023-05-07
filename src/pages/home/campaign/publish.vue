@@ -232,7 +232,7 @@ export default {
     },
     methods: {
         deletePic(event) {
-            this.$reqs(":8081/campaign/info/pics", "DELETE", {}, res => {
+            this.$reqs("/campaign/info/pics", "DELETE", {}, res => {
                       if (res.code == 200) {
                         this.swiperList = res.data
                       }
@@ -267,7 +267,7 @@ export default {
             return new Promise((resolve, reject) => {
                 let token = uni.getStorageSync("token");
                 let a = uni.uploadFile({
-                    url: rootUrl + ':8081/upload',
+                    url: rootUrl + '/upload',
                     filePath: url,
                     name: 'file',
                     formData:{
@@ -301,7 +301,7 @@ export default {
 
                         this.newCampaignData.campaignTime = formatTime(this.newCampaignData.campaignTime)
                         if (this.editing == true) {
-                            this.$reqs(":8081/campaign", "PATCH", this.newCampaignData, res => {
+                            this.$reqs("/campaign", "PATCH", this.newCampaignData, res => {
                                 if (res.code == 200 && res.data == true) {
 
                                     wx.showToast({
@@ -319,7 +319,7 @@ export default {
                                     })
                             })
                         }
-                        this.$reqs(":8081/campaign", "POST", this.newCampaignData, res => {
+                        this.$reqs("/campaign", "POST", this.newCampaignData, res => {
                             if (res.code == 200 && res.data == true) {
 
                                 wx.showToast({
@@ -369,7 +369,7 @@ export default {
             this.$refs.form1.validateField('campaignTime')
         },
         updatePics() {
-            this.$reqs(":8081/ui/banner", "POST", {}, res => {
+            this.$reqs("/ui/banner", "POST", {}, res => {
                 if (res.code == 200) {
                     this.swiperList = res.data
                 }

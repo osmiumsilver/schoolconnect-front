@@ -88,7 +88,7 @@ export default {
   methods: {
     init: function () {
       // if(uni.getStorageSync('token'))
-      // {this.$reqs(":8081/user/info", "GET", {},
+      // {this.$reqs("/user/info", "GET", {},
       //     res => {
       //       if (res.code == 200) {
       //         this.userInfo = res.data

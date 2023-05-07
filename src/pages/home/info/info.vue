@@ -91,7 +91,7 @@ export default {
   },
   created() {
 
-    this.$reqs(":8081/user/info", "GET", {userId: uni.getStorageSync('user_info').employeeId}, res => {
+    this.$reqs("/user/info/student", "GET", {userId: uni.getStorageSync('user_info').employeeId}, res => {
       if (res.data != null) {
         uni.setStorageSync('user_info', res.data)
       }
@@ -147,7 +147,7 @@ export default {
           putData['address'] = this.addressData
           putData['secondContact'] = this.secondContactData
           putData['requiredChanging'] = 2
-          this.$reqs(":8081/user/info", "PUT", putData, res => {
+          this.$reqs("/user/info", "PUT", putData, res => {
             console.log(res);
             if (res.code == 200) {
               uni.showToast({

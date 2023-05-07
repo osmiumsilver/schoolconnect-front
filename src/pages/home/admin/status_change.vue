@@ -92,7 +92,7 @@ export default {
     methods: {
         getUserWithNoPassword() {
 
-            this.$reqs(":8081/admin/user/info", "GET", {userId: this.searchModel}, res => {
+            this.$reqs("/admin/user/info", "GET", {userId: this.searchModel}, res => {
                 if (res.code == 200 && res.data) {
                     this.userList = res.data
                     this.choFlag = new Array(res.data.length).fill(true)
@@ -120,7 +120,7 @@ export default {
                 complete: (res) => {
                     if (res.confirm) {
 
-                        this.$reqs(":8081/admin/user/info/"  + (status==0 ?'unlock' : 'lock'), "PATCH", newList, res => {
+                        this.$reqs("/admin/user/info/"  + (status==0 ?'unlock' : 'lock'), "PATCH", newList, res => {
 
                             if (res.code == 200 && res.data) {
                                 Tips.success("成功", 1000)

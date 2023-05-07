@@ -86,10 +86,18 @@ export default {
         getSchoolToken(this.form, this._BasicAuthEncode(), res => {
           uni.setStorageSync("token", res.data.data)
           if (uni.getStorageSync("token")) {
-            this.$reqs(":8081/user/info", "GET", {},
+            this.$reqs("/user/info", "GET", {},
                 res => {
                   if (res.code == 200)
                     uni.setStorageSync('user_info', res.data)
+                    if(res.data.role=2)
+                    {
+                        this.$reqs("/user/info/student", "GET", {userId:uni.getStorageSync('user_info').employeeId}, res => {
+                                  if (res.code == 200&& res.data) {
+                                      uni.setStorageSync('user_info', res.data)
+                                  }
+                                })
+                    }
                   {
                     uni.showToast({
                       title: '登录成功',

@@ -85,7 +85,7 @@ export default {
       let getData = {
         userId: uni.getStorageSync("user_info").employeeId
       }
-      this.$reqs(":8081/admin/user/info/review", "GET", getData, res => {
+      this.$reqs("/admin/user/info/review", "GET", getData, res => {
 
         if (res.code == 200) {
           const itemLength = res.data.length
@@ -112,7 +112,7 @@ export default {
     // 查看详情
     detailInfo: function (userId) {
 
-      this.$reqs(':8081/user/info', 'GET', {userId: userId}
+      this.$reqs('/user/info', 'GET', {userId: userId}
           , res => {
             if (res.code == 200) {
               let str = ''
@@ -159,7 +159,7 @@ export default {
         confirmText: '是',
         complete: (res) => {
           if (res.confirm) {
-            this.$reqs(":8081/admin/user/info/review", "PUT", postData, res => {
+            this.$reqs("/admin/user/info/review", "PUT", postData, res => {
               if (res.code == 200) {
                 uni.showToast({
                   title: '保存成功',

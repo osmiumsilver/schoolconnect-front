@@ -1,4 +1,5 @@
-export let rootUrl = 'http://100.100.17.107';
+export let rootUrl = 'http://100.100.17.107:8081';
+export let authUrl = 'http://mint.szv2.nodes.wdksl.com:8080/api/auth'
 export let fileUrl = 'http://100.100.17.107:8080/api/images/';
 export const formatNumber = n => {
     n = n.toString()
@@ -13,7 +14,7 @@ export function wechatLogin(callback) {
         provider: 'weixin',
         success: async (loginRes) => {
             uni.request({
-                url: rootUrl + '/auth/wxlogin',
+                url: authUrl + '/wxlogin',
                 method: 'POST',
                 data: {
                     code: loginRes.code
@@ -45,7 +46,7 @@ export function wechatLogin(callback) {
 
 export function getToken(callback){
     uni.request({
-        url: rootUrl + '/auth/token',
+        url: authUrl + '/token',
         method: 'POST',
         header: {
             Authorization: "Basic " + BasicAuth,
@@ -158,7 +159,7 @@ export function reqs(url, method, data, successres, failres) {
 export function getSchoolToken(postData, BasicAuth, successres, failres) {
 
     uni.request({
-        url: rootUrl + '/auth/token',
+        url: authUrl + '/token',
         method: 'POST',
         header: {
             Authorization: "Basic " + BasicAuth,

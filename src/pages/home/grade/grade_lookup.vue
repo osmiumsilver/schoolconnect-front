@@ -41,7 +41,7 @@
         </view>
         <view class="list-subitem margin-top-sm">
           <view class="flex-sub text-left">
-            学分：{{ item.credits }}
+            学分：{{ item.courseCredits }}
           </view>
           <view class="flex-sub text-center">
             绩点：{{ item.points }}
@@ -100,7 +100,7 @@ export default {
     searchGrade: function (e) {
       this.gradeList = []
       if (this.currentIndex == 0) {
-        this.$reqs(":8081/grade/by_id", "GET", {userId: e, year: this.year, semester: this.semester}, res => {
+        this.$reqs("/grade/by_id", "GET", {userId: e, year: this.year, semester: this.semester}, res => {
           if (res.code == 200 && res.data.length) {
             this.gradeList = res.data
             for (let i = 0; i < this.gradeList.length; i++) {
@@ -111,7 +111,7 @@ export default {
         })
       }
       if (this.currentIndex == 1) {
-        this.$reqs(":8081/grade/by_class", "GET", {clazzId: e, year: this.year, semester: this.semester}, res => {
+        this.$reqs("/grade/by_class", "GET", {clazzId: e, year: this.year, semester: this.semester}, res => {
           if (res.code == 200 && res.data.length) {
             this.gradeList = res.data
             for (let i = 0; i < this.gradeList.length; i++) {
@@ -130,6 +130,19 @@ export default {
     confirmClick: function () {
       this.getGrade()
     },
+      calcPoints: function (index) { //计算绩点
+          const grade = this.gradeList[index].grade;
+          if (grade >= 90 && grade <= 100) { //JavaScript的switch语句不怎么好用 我暂时只能这么写
+              this.gradeList[index]['points'] = 3.5
+          } else if (grade >= 80 && grade < 90) {
+              this.gradeList[index]['points'] = 3
+          } else if (grade >= 70 && grade < 80) {
+              this.gradeList[index]['points'] = 2.5
+          } else if (grade < 70) {
+              this.gradeList[index]['points'] = 2
+          }
+
+      },
   },
 
 }

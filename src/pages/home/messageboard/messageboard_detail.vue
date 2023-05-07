@@ -1,92 +1,57 @@
 <template>
 
-  <view class="container">
-    <view class="grid">
-      <view class="row">
-        <view style="text-align: center;font-size: 40rpx;padding: 15rpx 0 30rpx 0;">公告详情</view>
-        <view class="user-info">
-          <view class="icon">
-            <image :src="entry.user.avatar"></image>
-          </view>
-          <view class="title">{{entry.user.name}}</view>
-        </view>
-        <view class="information">
-          <view class="st-title">
-            <textarea id="content" v-model="entry.content" disabled auto-height style="padding-left: 0px;"></textarea>
-          </view>
-        </view>
-        <view class="information">
-          <view class="st-bottom">
-            <view class="description">
-              <i-icon type="time" size="18" color="#80848f"></i-icon>
-              <view style="margin-top:3rpx;">{{ entry.pubDate }}</view>
+    <view>
+
+        <view class="container">
+            <cu-custom :isBack="true" bgColor="bg-orange-1">
+                <view slot="backText">
+                    返回
+                </view>
+                <view slot="content">
+                    公告详情
+                </view>
+            </cu-custom>
+            <view class="u-page">
+                <view class="u-content u-demo-block__content">
+                    <u-parse :content="content"></u-parse>
+                </view>
             </view>
-            <view class="description" style="display:none">
-              <i-icon type="message" size="18" color="#80848f"></i-icon>
-              <view style="margin-top:3rpx;">{{ entry.commentCount }}</view>
-            </view>
-          </view>
         </view>
-      </view>
     </view>
-    <i-message id="message"></i-message>
-  </view>
 
 </template>
 
 <script>
-import tip from '@/utils/tip';
-
 
 
 export default {
-  data() {
-    return {
+    data() {
+        return {
 
-        entry: {},
-        checkRules: {
-          required: ["name"]
-        },
-        errMsgs: {},
-        audit: false //是否是审核状态
+            content: `
+					<p>露从今夜白，月是故乡明</p>
+					<img src="https://cdn.uviewui.com/uview/swiper/2.jpg" />
+				`
 
-
-    };
-  },
-
-  onLoad(options) {
-    if (options.id == undefined) {} else {
-      this.getDetail(options.id);
-      Session.set('refresh', true);
-    }
-  },
-
-  methods: {
-    goBack(e) {
-      uni.navigateBack({
-        delta: 1
-      });
+        };
     },
 
-    async getDetail(id) {
-      const data = await wxRequest.Get(`tweet/detail`, {
-        id: id
-      });
+    onLoad(options) {
+        if (options.detail)
+            this.$reqs("/messageboard/detail", "GET", {id: JSON.parse(options.detail)}, res => {
+                if (res.code == 200 && res.data) {
+                    this.content = res.data.body
+                }
+            })
+    },
 
-      if (data != undefined && data.code >= 1) {
-        if (data.message != undefined && data.message != '') {
-          tip.error(data.message);
-        }
-
-        this.entry = data.result;
-      } else {
-        tip.error(data.message);
-      }
-    }
-
-  },
+    methods: {},
 };
 </script>
 <style lang="scss" src="@/static/styles/common_form.scss">
+
+.u-content {
+  padding: 24rpx;
+}
 
 </style>

@@ -91,7 +91,7 @@ export default {
             content: '是否撤销申请该订单?',
             success: async (res) => {
               if (res.confirm) {
-                this.$reqs(":8081/repair", "DELETE", {id: this.user.id}, res => {
+                this.$reqs("/repair", "DELETE", {id: this.user.id}, res => {
                   console.log(res);
                   if (res.data == true) {
                     uni.showToast({

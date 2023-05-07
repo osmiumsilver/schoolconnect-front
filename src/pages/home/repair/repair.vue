@@ -77,7 +77,7 @@ export default {
      * @description 根据申报状态、楼层、获取申报数据
      * */
     async getApplyData(status,userId) {
-      this.$reqs(":8081/repair/my", "GET", {status: status,userId:userId}, res => {
+      this.$reqs("/repair/my", "GET", {status: status,userId:userId}, res => {
         console.log(res);
         if (res.code == 200) {
           this.applyData = res.data

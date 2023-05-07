@@ -109,7 +109,9 @@ text {
   width: 100vw;
   height: 100vh;
 }
-
+.noflex {
+     flex: 0 !important;
+ }
 .flex-row {
   display: flex;
   flex-direction: row;
