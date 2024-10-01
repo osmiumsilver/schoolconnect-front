@@ -136,6 +136,7 @@ export default {
                 success: (res) => {
                   wechatLogin();
                   uni.setStorageSync("wx_info", res.userInfo)
+                    this.gotoLogin()
                 },
                 fail: (err) => {
                   console.log("获取UserProfile错误 ： ", err)

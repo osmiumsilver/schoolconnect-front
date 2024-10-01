@@ -58,9 +58,6 @@
 </template>
 
 <script>
-import {
-  moment
-} from '@/utils/moment.js'
 
 export default {
   data() {
@@ -120,7 +117,7 @@ export default {
         this.$reqs("/repair", "POST", [this.formData], res => {
           console.log(res);
           if (res.data == true) {
-            wx.showToast({
+            uni.showToast({
               title: '提交成功',
               duration: 1000
             })
@@ -130,7 +127,7 @@ export default {
               })
             }, 1200)
           } else
-            wx.showToast({
+            uni.showToast({
               title: '提交失败',
               icon: 'error',
               duration: 1000
@@ -142,7 +139,7 @@ export default {
     validateForm() {
       let cp = /[1][3,4,5,7,8][0-9]{9}$/;
       if (this.formData.initiator === '' || !this.formData.initiator) {
-        wx.showToast({
+        uni.showToast({
           title: '请填写申报人',
           icon: 'error',
           duration: 500
@@ -150,7 +147,7 @@ export default {
         return false;
       }
       if (this.formData.phone === '' || !this.formData.phone) {
-        wx.showToast({
+        uni.showToast({
           title: '请填写手机号码',
           icon: 'error',
           duration: 500
@@ -158,7 +155,7 @@ export default {
         return false;
       }
       if (!cp.test(this.formData.phone)) {
-        wx.showToast({
+        uni.showToast({
           title: '请填写正确手机号',
           icon: 'error',
           duration: 500
@@ -166,7 +163,7 @@ export default {
         return false;
       }
       if (this.formData.description === '' || !this.formData.description) {
-        wx.showToast({
+        uni.showToast({
           title: '请说明情况',
           icon: 'error',
           duration: 500

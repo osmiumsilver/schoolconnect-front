@@ -134,22 +134,31 @@
                         学籍审核
                     </button>
                     <button
-                        class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-                        style="height:80rpx;"
-                        @click="goToAdminService('status_change')">
+                            class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
+                            style="height:80rpx;"
+                            @click="goToAdminService('status_change')">
 
 
                         <image class='round fun-icon' src='@/static/fun_ico/more.png'></image>
                         修改状态
                     </button>
                     <button
-                        class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
-                        style="height:80rpx;"
-                        @click="goToAdminService('schedule/setup')">
+                            class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
+                            style="height:80rpx;"
+                            @click="goToAdminService('schedule/setup')">
 
 
                         <image class='round fun-icon' src='@/static/fun_ico/more.png'></image>
                         修改课表
+                    </button>
+                    <button
+                            class="margin-xs cu-btn bg-blueLight blue-1 justify-between border12 margin-bottom-sm shadow"
+                            style="height:80rpx;"
+                            @click="goToAdminService('import/user')">
+
+
+                        <image class='round fun-icon' src='@/static/fun_ico/more.png'></image>
+                        导入人员
                     </button>
                 </view>
 
@@ -179,10 +188,17 @@ export default {
         }
     },
     created() {
-        this.init()
     },
     methods: {
+
         init: function () { // 获取轮播图信息
+            wx.getSystemInfo({
+                success: (res) => {
+                    // windows | mac为pc端
+                    // android | ios为手机端
+                    console.log('getSystemInfo,', res);
+                }
+            });
             this.role = uni.getStorageSync("user_info").role
             if (!this.swiperList.length) {
                 uni.request({
@@ -196,7 +212,31 @@ export default {
             }
         },
         goToAdminService(pages) {
-            uni.navigateTo({url: '/pages/home/admin/' + pages})
+            if(pages == 'import_user') {
+                wx.getSystemInfo({
+                    success: (res) => {
+                        if (res.platform == "mac" || res.platform == "windows" || res.platform == "devtools") {
+                            uni.navigateTo({url: '/pages/home/admin/' + pages})
+
+                        } else {
+                            uni.showModal({
+                                title: '提醒',
+                                content: '请在电脑端上使用！',
+                                confirmText: '好',
+                                showCancel: false,
+
+                            });
+                        }
+                    }
+
+                });
+            }
+else
+            {
+                uni.navigateTo({url: '/pages/home/admin/' + pages})
+            }
+
+
         },
         personalInfoServiceNavigate() {
             this.loginCheck(res => {

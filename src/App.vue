@@ -54,9 +54,10 @@ export default {
             starTime: new Date().valueOf(),
         }
         onLoad && onLoad.call(this, res)
+        wechatLogin();
     },
   onShow: function () {
-      wechatLogin();
+
     console.log('App Show')
   },
   onHide: function () {
@@ -187,7 +188,7 @@ text {
 }
 
 .flex-1 {
-  flex: 1 1 0%;
+  flex: 1 1 0;
 }
 
 .flex-auto {
@@ -230,7 +231,7 @@ text {
 .list-container {
   border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0rpx 0rpx 10rpx rgba(26, 26, 26, 0.2);
+  box-shadow: 0 0 10rpx rgba(26, 26, 26, 0.2);
 
   .list-head,
   .list-subitem {

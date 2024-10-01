@@ -11,7 +11,7 @@ export default class Tips {
 
   static success(title, duration = 500) {
     setTimeout(() => {
-      wx.showToast({
+      uni.showToast({
         title: title,
         icon: "success",
         mask: true,
@@ -35,7 +35,7 @@ export default class Tips {
       wx.showModal({
         title: title,
         content: text,
-        showCancel: showCancel==false?false:true,
+        showCancel: showCancel != false,
         success: res => {
           if (res.confirm) {
             resolve(payload);
@@ -52,7 +52,7 @@ export default class Tips {
 
   static toast(title, icon = "success") {
     setTimeout(() => {
-      wx.showToast({
+      uni.showToast({
         title: title,
         icon: icon,
         mask: true,
@@ -65,7 +65,7 @@ export default class Tips {
    * 警告框
    */
   static alert(title) {
-    wx.showToast({
+    uni.showToast({
       title: title,
       icon: "/public/images/error.png",
       mask: true,
@@ -78,7 +78,7 @@ export default class Tips {
    */
 
   static error(title, duration = 1500) {
-    wx.showToast({
+    uni.showToast({
       title: title,
       icon: 'none',
       mask: false,
@@ -94,7 +94,7 @@ export default class Tips {
       return;
     }
     Tips.isLoading = true;
-    wx.showLoading({
+    uni.showLoading({
       title: title,
       mask: true
     });
@@ -106,7 +106,7 @@ export default class Tips {
   static loaded() {
     if (Tips.isLoading) {
       Tips.isLoading = false;
-      wx.hideLoading();
+      uni.hideLoading();
     }
   }
 
@@ -122,24 +122,24 @@ export default class Tips {
   }
 
   static alert (text, ok) {
-    if (ok === void 0) { ok = function (res) { }; } 
-    if (!text) { 
-     return; 
-    }   
-    wx.showModal({ 
-     content: text, 
-     showCancel: false, 
-     confirmColor: '#000000', 
-     cancelColor: '#000000', 
-     success: ok 
-    });   
+    if (ok === void 0) { ok = function (res) { }; }
+    if (!text) {
+     return;
+    }
+    wx.showModal({
+     content: text,
+     showCancel: false,
+     confirmColor: '#000000',
+     cancelColor: '#000000',
+     success: ok
+    });
   }
-    
+
 }
 
 
- 
- 
+
+
 
 /**
  * 静态变量，是否加载中

@@ -94,8 +94,10 @@
                         title: "全部学年",
                         value: "",
                     })}
-                let thisYear = new Date().getFullYear()
-                for (let i = thisYear - 3; i < thisYear + 1; i++) {
+                let currentYear = new Date().getFullYear()
+                if(currentYear%2==0)
+                    currentYear=-1
+                for (let i = currentYear - 3; i < currentYear + 1; i=i+2) {
                     let tempYear = parseInt(i) + '-' + parseInt(i + 1)
                     yearArray.push({
                         title: tempYear,

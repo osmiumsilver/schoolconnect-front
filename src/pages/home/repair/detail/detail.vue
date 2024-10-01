@@ -154,7 +154,7 @@ page {
     height: 80rpx;
     line-height: 80rpx;
     background-color: #fff;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.08);
     padding: 0 30rpx;
 
     .dot {
@@ -168,7 +168,7 @@ page {
 
   .main-detail-list {
     background-color: #fff;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.08);
 
     .content-view {
       padding: 30rpx;

@@ -193,7 +193,6 @@ export default {
   overflow: hidden;
   width: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
   height: 100%;
 }
 
@@ -212,7 +211,7 @@ export default {
 .section {
   padding: 59.3rpx 0 73.26rpx;
   background-color: #ffffff;
-  border-radius: 0px 0px 41.86rpx 41.86rpx;
+  border-radius: 0 0 41.86rpx 41.86rpx;
   box-shadow: 3.49rpx 8.72rpx 22.67rpx #15161f0f;
 }
 
@@ -327,7 +326,7 @@ export default {
 }
 
 .uButton_CSr {
-  padding: 0px 0px;
+  padding: 0 0;
   margin-left: unset;
   margin-right: unset;
   border-radius: 8.72rpx;

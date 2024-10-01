@@ -28,7 +28,7 @@
                 <!-- 顶部切换周数 -->
                 <view class="cu-center">
                     <button class="cu-btn round bg-green shadow week-btn" @click="modalName = 'WeekSelectorModal'">
-                        第{{ weekIndex + 1 }}周-周{{ dayOfWeek[dateOfToday - 1] }}
+                        第{{ weekIndex + 1 }}周 - 今日周{{ dayOfWeek[dateOfToday - 1] }}
                     </button>
                 </view>
                 <view class="cu-right">
@@ -82,7 +82,8 @@
                 <view v-for="(item, index) in courseList" :key='index'>
                     <view v-for="(subitem, subindex) in item.weeks" :key="subindex">
                         <view v-if='subitem===weekIndex+1'>
-                            <view :style="'margin-left:'+((item.dayOfWeek-1)*12.8+0.4)+'vw;margin-right:0.4vw;margin-top:'+((item.startingPeriod-1)*120+5)+'rpx;height:'+(item.lastingPeriods*120-5)+'rpx;background-color:'+'red'+';width:12vw;z-index: 9;'" class="schedule-item radius"
+                            <view :style="'margin-left:'+((item.dayOfWeek-1)*12.8+0.4)+'vw;margin-right:0.4vw;margin-top:'+((item.startingPeriod-1)*120+5)+'rpx;height:'+(item.lastingPeriods*120-5)+'rpx;background-color:'+'red'+';width:12vw;z-index: 9;'"
+                                  class="schedule-item radius"
                                   @click="showDetail(index)">
                                 <view class="text-white padding-xs schedule-text" style="font-size:22rpx;">
                                     <view style="line-height:24rpx;max-height:150rpx;overflow:hidden;">
@@ -99,7 +100,8 @@
         <!-- 侧边栏设置 -->
         <view :class="modalName=='DrawerModal'?'show':''" class="cu-modal drawer-modal justify-start"
               @click="modalName = null">
-            <view :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]" class="cu-dialog basis-lg bg-gradual-blue text-black"
+            <view :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]"
+                  class="cu-dialog basis-lg bg-gradual-blue text-black"
                   @tap.stop="">
                 <view class="margin-top-xl margin-bottom-xl shadow-lg">
                     <view class="text-center text-white text-xl padding-bottom solids-bottom margin-bottom">
@@ -235,7 +237,7 @@ export default {
             dayArray: [], // 存放本周日期
             month: 1, //存放当前月
             dayOfWeek: ['一', '二', '三', '四', '五', '六', '日'],
-            dateOfToday: 1, //今天周几
+            dateOfToday: 7, //今天周几
             bacimg: "",
             baseImg: "",
             timeSlice: [
@@ -282,28 +284,17 @@ export default {
     components: {
         termPicker
     },
-    created() {
+    onLoad() {
         this.init()
     },
     methods: {
-        getCourseAdmin(courseId) {
-            this.modalName = null
-            this.$reqs("/schedule/class", "GET", {
-                year: this.year,
-                semester: this.semester,
-                classNo: this.searchModel
-            }, res => {
-                if (res.code == 200)
-                    this.courseList = res.data
-            })
-        },
         init: function () {
             this.$reqs("/startdate", "GET", {}, res => {
-
                 if (res.code == 200) {
                     this.startDayList = res.data;
                 }
             })
+            this.searchModel = uni.getStorageSync("user_info").classNo
             this.bacimg = uni.getStorageSync('bacimg') ? uni.getStorageSync('bacimg') : this.baseImg
             const courseList = uni.getStorageSync('course_list')
             // this.$reqs("/schedule/class", 'GET', {
@@ -318,48 +309,35 @@ export default {
             if (courseList) {
                 this.courseList = courseList
             }
-            // 设置开学时间
+            // 设置开学时间 先检查Storage
             let value = wx.getStorageSync('start_day')
-
             if (!value) {
-                let tempDay = this.startDayList[0].replace("-", "/").replace("-", "/")
+                let startDay = this.startDayList[0].replace("-", "/").replace("-", "/")
                 // console.log(temp_day)
-                uni.setStorageSync('start_day', tempDay + ' 00:00:00')
-                value = tempDay + ' 00:00:00'
+                uni.setStorageSync('start_day', startDay + ' 00:00:00')
+                value = startDay + ' 00:00:00'
             }
-            // 计算相差天数判断周数
-            // console.log('相差天数：' + this.dateMinus(value))
+
+            // 计算相差天数判断周数，传入开学时间为基准，天数除以7变成周+1，因为从0开始
             let subWeek = parseInt(this.dateMinus(value) / 7) + 1;
             console.log('第' + subWeek + '周')
             // 计算周数
             if (subWeek > 0 && subWeek < 21) {
                 this.UpToDateWeek = subWeek
+                //传入为数组index 所以减1
                 this.weekSelector(subWeek - 1)
             } else {
                 this.UpToDateWeek = "学期不在其区间"
                 this.weekSelector(0)
             }
             // 设置今天周几
-            this.getDay()
+            this.setDateOfToday()
 
-        },
+        },//实时减去选定时间 除以86400000毫秒 返回天数
         dateMinus: function (whichDay) {
-            const sdate = new Date(whichDay);
-            const now = new Date();
-            const days = now.getTime() - sdate.getTime();
-            const day = parseInt(days / (1000 * 60 * 60 * 24));
-            return day;
+            return parseInt((new Date().getTime() - new Date(whichDay).getTime()) / (1000 * 60 * 60 * 24));
         },
-        getYearArray: function () {
-            let year_array = []
-            let this_year = new Date().getFullYear()
-            for (let i = this_year - 3; i < this_year + 1; i++) {
-                let temp_year = parseInt(i) + '-' + parseInt(i + 1)
-                year_array.push(temp_year)
-            }
-            year_array.push('全部学年')
-            return year_array.reverse()
-        },
+
 
         semesterClick: function (e) {
             this.semester = e
@@ -372,36 +350,27 @@ export default {
             this.termArray = termArray
         },
         // 获取今天周几
-        getDay: function () {
-            let date = new Date();
-            let day = date.getDay()
-            if (day) {
-                this.dateOfToday = day
-            } else {
-                this.dateOfToday = 7
-            }
+        setDateOfToday: function () {
+            this.dateOfToday = new Date().getDay()
+
         },
         // 获取今天距离某天相差天数
 
-        // 周数变化,设置本周日期
+        // 周数变化,设置本周日期，第一周不需要做任何操作 所以传入index为0
         weekSelector: function (index) {
+            this.weekIndex = index //设置周数
+            console.log(index, "weekSelector")
             let value = uni.getStorageSync("start_day")
-            console.log(value)
             let myDate = new Date(value)
+            //以开学时间为基准追加时间只动日期,利用Date来解决月份问题，追加到一定程度就会变动月份 很方便
             myDate.setDate(myDate.getDate() + index * 7);
-
-            let dayArray = []
-            let mon = myDate.getMonth() + 1
-            dayArray.push(this.$formatNumber(myDate.getDate()))
+            let dayArray = [this.$formatNumber(myDate.getDate())]
+            this.month = myDate.getMonth() + 1
             for (let i = 0; i < 6; i++) {
                 myDate.setDate(myDate.getDate() + 1)
                 dayArray.push(this.$formatNumber(myDate.getDate()))
             }
-
-            // console.log(mon, weekday)
-            this.weekIndex = index //设置周数
             this.dayArray = dayArray //设置
-            this.month = mon
             this.modalName = null
         },
         // 获取课表
@@ -414,7 +383,7 @@ export default {
             }, res => {
                 if (res.code == 200 && res.data)
                     uni.setStorageSync('course_list', res.data)
-                if (res.code==200 && res.data == [])
+                if (res.code == 200 && res.data == [])
                     uni.showToast({
                         title: '课表为空',
                         mask: false,
@@ -497,7 +466,7 @@ export default {
                 '教师：' + this.courseList[index].courseTeacher + '\n' +
                 '周次：' + this.courseList[index].weeks + '\n' +
                 '学分：' + (this.courseList[index].courseCredits ? this.courseList[index].courseCredits : '空')
-            if (this.role == 1|| this.role ==0) {
+            if (this.role == 1 || this.role == 0) {
                 uni.showModal({
                     title: this.courseList[index].courseName,
                     content: str,
@@ -509,14 +478,14 @@ export default {
                                 content: '是否确认删除？',
                                 success: res => {
                                     if (res.confirm) {
-this.$reqs("/schedule/class", "DELETE", this.courseList[index], res => {
-    uni.showToast({
-        title: '删除成功',
-        mask: false,
-        duration: 1500
-    });
-    this.getCourse(this.searchModel)
-        })
+                                        this.$reqs("/schedule/class", "DELETE", this.courseList[index], res => {
+                                            uni.showToast({
+                                                title: '删除成功',
+                                                mask: false,
+                                                duration: 1500
+                                            });
+                                            this.getCourse(this.searchModel)
+                                        })
                                     }
                                 }
                             })
@@ -567,23 +536,23 @@ this.$reqs("/schedule/class", "DELETE", this.courseList[index], res => {
     position: relative;
 
     .left-rectangle {
-      height: 50rpx;
-      width: 80rpx;
+      height: 50 rpx;
+      width: 80 rpx;
 
       position: absolute;
-      bottom: 14rpx;
+      bottom: 14 rpx;
     }
 
     .left-round {
-      width: 66rpx;
-      height: 66rpx;
+      width: 66 rpx;
+      height: 66 rpx;
       border-radius: 50%;
 
-      box-shadow: 0 0 1rpx;
+      box-shadow: 0 0 1 rpx;
 
       position: absolute;
-      left: 50rpx;
-      bottom: 6rpx;
+      left: 50 rpx;
+      bottom: 6 rpx;
 
       display: flex;
       flex-direction: row;
@@ -603,7 +572,7 @@ this.$reqs("/schedule/class", "DELETE", this.courseList[index], res => {
 
     .week-btn {
       position: absolute;
-      bottom: 10rpx;
+      bottom: 10 rpx;
     }
   }
 

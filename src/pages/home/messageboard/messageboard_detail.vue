@@ -30,7 +30,7 @@ export default {
 
             content: `
 					<p>露从今夜白，月是故乡明</p>
-					<img src="https://cdn.uviewui.com/uview/swiper/2.jpg" />
+					<img src="https://cdn.uviewui.com/uview/swiper/2.jpg" alt="default"/>
 				`
 
         };

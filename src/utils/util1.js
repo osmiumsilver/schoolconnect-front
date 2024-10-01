@@ -16,7 +16,7 @@ export function fmoney(s, n) {
      * */
     n = n > 0 && n <= 20 ? n : 2;
     s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
-    var l = s.split(".")[0].split("").reverse(),
+    const l = s.split(".")[0].split("").reverse(),
         r = s.split(".")[1];
     let t = "";
     for (let i = 0; i < l.length; i++) {
@@ -27,19 +27,13 @@ export function fmoney(s, n) {
 
 // 验证手机号码是否有效
 export function isMobile(phone) {
-    var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
-    if (!myreg.test(phone)) {
-        return false;
-    } else {
-        return true;
-    }
+    const myreg = /^1[3,4,5,7,8][0-9]{9}$/;
+    return myreg.test(phone);
 }
 
 export function isBlank(data) {
-    if (data == null || data == undefined || data == '') {
-        return true
-    }
-    return false
+    return data == null || data == '';
+
 }
 
 export function getCurrentTime() {
@@ -102,7 +96,7 @@ export function getDateDiff(dateTime) {
 export function cpVersion(v1, v2) {
     v1 = v1.split('.')
     v2 = v2.split('.')
-    var len = Math.max(v1.length, v2.length)
+    const len = Math.max(v1.length, v2.length);
 
     while (v1.length < len) {
         v1.push('0')
@@ -111,9 +105,9 @@ export function cpVersion(v1, v2) {
         v2.push('0')
     }
 
-    for (var i = 0; i < len; i++) {
-        var num1 = parseInt(v1[i])
-        var num2 = parseInt(v2[i])
+    for (let i = 0; i < len; i++) {
+        const num1 = parseInt(v1[i]);
+        const num2 = parseInt(v2[i]);
 
         if (num1 > num2) {
             return 1

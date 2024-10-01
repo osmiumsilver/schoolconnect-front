@@ -157,7 +157,7 @@ export default {
 
     data() {
         return {
-            editing: 'false',
+            editing: false,
             formattedTime: '',
             myUserInfo: uni.getStorageSync('user_info'),
             showDateTimePicker: false,
@@ -304,7 +304,7 @@ export default {
                             this.$reqs("/campaign", "PATCH", this.newCampaignData, res => {
                                 if (res.code == 200 && res.data == true) {
 
-                                    wx.showToast({
+                                    uni.showToast({
                                         title: '发布成功',
                                         duration: 1000
                                     })
@@ -312,17 +312,18 @@ export default {
                                         uni.navigateBack(-1)
                                     }, 1200)
                                 } else
-                                    wx.showToast({
+                                    uni.showToast({
                                         title: '提交失败',
                                         icon: 'error',
                                         duration: 1000
                                     })
                             })
+                            return
                         }
                         this.$reqs("/campaign", "POST", this.newCampaignData, res => {
                             if (res.code == 200 && res.data == true) {
 
-                                wx.showToast({
+                                uni.showToast({
                                     title: '发布成功',
                                     duration: 1000
                                 })
@@ -330,7 +331,7 @@ export default {
                                     uni.navigateBack(-1)
                                 }, 1200)
                             } else
-                                wx.showToast({
+                                uni.showToast({
                                     title: '提交失败',
                                     icon: 'error',
                                     duration: 1000

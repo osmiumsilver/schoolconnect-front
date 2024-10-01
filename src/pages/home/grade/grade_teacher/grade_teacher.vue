@@ -18,15 +18,19 @@
                 <term-picker @confirm="confirmClick" @semester="semesterClick" @year="yearClick"></term-picker>
             </view>
         </view>
-        <uni-combox v-model="value1" :candidates="classList" class="noflex text-wrapper"></uni-combox>
-        <uni-combox v-model="value2" :candidates="courseList" class="noflex text-wrapper"></uni-combox>
+        班级号：
+        <uni-combox v-model="value1" :candidates="classList" class="noflex text-wrapper"
+                    style="z-index: 999"></uni-combox>
+        课程号：
+        <uni-combox v-model="value2" :candidates="courseList" class="noflex text-wrapper"
+                    style="z-index: 99"></uni-combox>
 
 
         <!-- 主体展示页面 -->
         <view v-if="gradeList.length" class="animation-slide-bottom margin list-container">
             <view class="list-head bg-blue-1">
                 <view class="">
-                    {{this.courseName}}
+                    成绩信息
                 </view>
                 <view class="">
                     选中
@@ -40,7 +44,7 @@
                 </view>
                 <view class="list-subitem margin-top-sm">
                     <view class="flex-sub text-left">
-                        <text class="text-bold" v-if="item.awaitingRevision==1">正在等待审核\n</text>
+                        <text v-if="item.awaitingRevision==1" class="text-bold">正在等待审核\n</text>
                         学分：{{ item.courseCredits }}
                     </view>
                     <view class="flex-sub text-center">
@@ -58,6 +62,13 @@
             <view class="list-head bg-blue-1">
             </view>
         </view>
+        <view style="padding: 20px;">
+            <u-button text="导出成绩模版" type="primary"
+                      @click="exportTemplate(value1,value2,year,semester)"></u-button>
+        </view>
+        <view style="padding: 20px;">
+            <u-button text="导入成绩" type="primary" @click="chooseUpload"></u-button>
+        </view>
         <!-- 提示区域 -->
         <cu-empty :type="emptyType">
             <view slot="text" class="">
@@ -72,39 +83,80 @@
 
 <script>
 import mixin from "@/mixins/grade_mixin";
+import upload_mixin from "@/mixins/upload_mixin";
 import search_empty_message_mixin from "@/mixins/search_empty_message_mixin";
 import moment from "@/utils/moment";
+import {rootUrl} from "@/utils/util";
 
 export default {
-    mixins: [mixin, search_empty_message_mixin], // 引入可复用的代码
+    mixins: [upload_mixin, mixin, search_empty_message_mixin], // 引入可复用的代码
     name: "grade_teacher.vue",
     data() {
         return {
             value1: '',
-            courseName:'',
+            courseName: '',
             value2: '',
             classList: [],
             courseList: [],
             gradeList: [],
             semester: '',
             year: '',
-            averageGrade:'',
+            averageGrade: '',
         };
     },
     onLoad() {
         this.$reqs("/teacher/class", "GET", {}, res => {
             if (res.code == 200 && res.data) {
                 this.classList = res.data
+                for (let i = 0; i < this.gradeList.length; i++) {
+                    this.calcPoints(i);
+                }
             }
         })
         this.$reqs("/course/by_teacher", "GET", {}, res => {
             if (res.code == 200 && res.data) {
                 this.courseList = res.data
+                for (let i = 0; i < this.gradeList.length; i++) {
+                    this.calcPoints(i);
+                }
             }
         })
     },
     methods:
         {
+            exportTemplate(clazzId, courseId, year, semester) {
+                if (clazzId == '' || courseId == '') {
+                    uni.showModal({
+                        title: '提示',
+                        content: '请选择班级与课程号',
+                        showCancel: false,
+                        confirmText: '好',
+                    });
+                    return
+                }
+                uni.downloadFile({
+                    url: rootUrl + '/grade/export?' + 'clazzId=' + clazzId + '&courseId=' + courseId + '&year=' + year + '&semester=' + semester,
+                    filePath: wx.env.USER_DATA_PATH + '/grade.xls',
+                    header: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + wx.getStorageSync('token'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    success: (res) => {
+                        if (res.statusCode === 200) {
+                            let filePath = res.filePath
+                            uni.openDocument({
+                                filePath: filePath,
+                                success: (res) => {
+                                    console.log('下载成功');
+                                    uni.hideLoading()
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+            ,
             semesterClick(e) {
                 this.semester = e
             },
@@ -112,6 +164,7 @@ export default {
                 this.year = e
             },
             confirmClick: function () {
+
                 this.getGrade()
             },
             choChange: function (index) { //是否选中
@@ -119,6 +172,15 @@ export default {
                 this.calcu()
             },
             getGrade() {
+                if (this.value2 == null || this.value1 == null || this.value2==''|| this.value1=='') {
+                    uni.showModal({
+                        title: '提示',
+                        content: '班级号或课程号不能为空！',
+                        showCancel: false,
+                        confirmText: '好',
+                    });
+                    return
+                }
                 this.$reqs("/grade/by_class", "GET", {
                     courseId: this.value2,
                     clazzId: this.value1,
@@ -129,13 +191,16 @@ export default {
                         this.gradeList = res.data
                         this.choFlag = new Array(res.data.length).fill(true)
                         this.calcu();
+                        for (let i = 0; i < this.gradeList.length; i++) {
+                            this.calcPoints(i);
+                        }
                     }
                 })
-                this.$reqs("/course/get-name", "GET", {courseId:this.value2}, res => {
-                          if (res.code == 200) {
-                            this.courseName = res.data
-                          }
-                        })
+                this.$reqs("/course/get-name", "GET", {courseId: this.value2}, res => {
+                    if (res.code == 200) {
+                        this.courseName = res.data
+                    }
+                })
 
             },
             detailGrade: function (e) {
@@ -158,8 +223,8 @@ export default {
 
                     ,
                     showCancel: true,
-                    cancelText:'确定',
-                    confirmText:'修改成绩',
+                    cancelText: '确定',
+                    confirmText: '修改成绩',
                     complete: (res) => {
                         if (res.confirm) {
 
@@ -176,11 +241,15 @@ export default {
                                             })
                                             return
                                         }
-                                       this.$reqs("/grade", "PATCH", {id:e.id,grade:res.content,awaitingRevision:1}, res => {
-                                                 if (res.code == 200&&res.data==true) {
-                                                   this.getGrade = res.data
-                                                 }
-                                               })
+                                        this.$reqs("/grade", "PATCH", {
+                                            id: e.id,
+                                            grade: res.content,
+                                            awaitingRevision: 1
+                                        }, res => {
+                                            if (res.code == 200 && res.data == true) {
+                                                this.getGrade = res.data
+                                            }
+                                        })
                                     }
 
                                 }
@@ -192,17 +261,30 @@ export default {
                     }
                 })
             },
-            calcu(){
-                let sumGrade=0;
-                let count=0;
+            calcu() {
+                let sumGrade = 0;
+                let count = 0;
                 for (let i = 0; i < this.gradeList.length; i++) {
+                    this.calcPoints(i)
                     if (this.choFlag[i]) {
                         count++;
                         sumGrade += parseFloat(this.gradeList[i].grade);
                     }
                 }
                 this.averageGrade = sumGrade / this.gradeList.length
-            }
+            },calcPoints: function (index) { //计算绩点
+        const grade = this.gradeList[index].grade;
+        if (grade >= 90 && grade <= 100) { //JavaScript的switch语句不怎么好用 我暂时只能这么写
+            this.gradeList[index]['points'] = 3.5
+        } else if (grade >= 80 && grade < 90) {
+            this.gradeList[index]['points'] = 3
+        } else if (grade >= 70 && grade < 80) {
+            this.gradeList[index]['points'] = 2.5
+        } else if (grade < 70) {
+            this.gradeList[index]['points'] = 2
+        }
+
+    }
         },
 }
 

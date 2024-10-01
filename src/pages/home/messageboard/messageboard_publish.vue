@@ -153,8 +153,7 @@ export default {
             this.editorCtx.format(name, value)
         },
         onStatusChange(e) {
-            const formats = e.detail
-            this.formats = formats
+            this.formats = e.detail
         },
         insertDivider() {
             this.editorCtx.insertDivider({
@@ -216,7 +215,7 @@ export default {
             this.editorCtx.undo()
         },
         publish() {
-            var that = this;
+            const that = this;
             this.editorCtx.getContents({
 
                 complete: function (res) {

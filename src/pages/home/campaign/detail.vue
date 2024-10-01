@@ -232,7 +232,7 @@ export default {
                             contactPhone: res.content
                         }, res => {
                             if (res.code == 200 && res.data == true) {
-                                wx.showToast({
+                                uni.showToast({
                                     title: '报名成功',
                                     duration: 1000
                                 })
@@ -251,7 +251,7 @@ export default {
                                         showCancel: true,
                                         success: res => {
                                             if (res.confirm) {
-                                                var that = this
+                                                const that = this;
                                                 uni.requestSubscribeMessage({
                                                         tmplIds: ['wY3fwfbdveAROT3Z6erKhbP3OT0UPt2VrpihcloigEg'],
                                                         complete(res) {
@@ -276,7 +276,7 @@ export default {
 
                                 }, 1200)
                             } else
-                                wx.showToast({
+                                uni.showToast({
                                     title: '提交失败',
                                     icon: 'error',
                                     duration: 1000
@@ -594,7 +594,7 @@ page {
     height: 80rpx;
     line-height: 80rpx;
     background-color: #fff;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.08);
     padding: 0 30rpx;
 
     .dot {
@@ -608,7 +608,7 @@ page {
 
   .main-detail-list {
     background-color: #fff;
-    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.08);
 
     .content-view {
       padding: 30rpx;

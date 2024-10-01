@@ -1,6 +1,9 @@
-export let rootUrl = 'http://100.100.17.107:8081';
-export let authUrl = 'http://mint.szv2.nodes.wdksl.com:8080/api/auth'
-export let fileUrl = 'http://100.100.17.107:8080/api/images/';
+// export let rootUrl = 'https://api.abelyao.cn/schoolconnect';
+export let rootUrl = 'http://172.30.65.128:9001'
+// export let authUrl = 'https://api.abelyao.cn/api/auth';
+export let authUrl= "http://172.30.65.128:9000"
+// #fileUrl 必须加斜杠 其他不能加
+export let fileUrl = 'https://api.abelyao.cn/images/';
 export const formatNumber = n => {
     n = n.toString()
     return n[1] ? n : '0' + n
@@ -19,7 +22,7 @@ export function wechatLogin(callback) {
                 data: {
                     code: loginRes.code
                 },
-                success: res => {
+                success: (res) => {
                     if (res.data.data.openid === undefined) {
                         console.log('获取openid失败: ', res.data.data.errMsg);
                     }
@@ -34,7 +37,7 @@ export function wechatLogin(callback) {
                         icon: 'error',
                         duration: 1500
                     });
-                    console.log("【Error】request.openid ： ",err)
+                    console.log("【Error】request.openid ： ", err)
                 }
             });
         },
@@ -44,37 +47,6 @@ export function wechatLogin(callback) {
     })
 }
 
-export function getToken(callback){
-    uni.request({
-        url: authUrl + '/token',
-        method: 'POST',
-        header: {
-            Authorization: "Basic " + BasicAuth,
-            'X-Requested-With': "XMLHttpRequest"
-        },
-        data: {
-            postData
-        },
-        success: res => {
-            if (res) {
-                if (res.data.code == 200) {
-                    return typeof successres == "function" && successres(res);
-                } else {
-                    console.log("【SError】request.token : ", res)
-                    return typeof failres == "function" && failres(res)
-                }
-            }
-
-        },
-        fail: (res) => {
-            console.log("【Error】request.token : ", res)
-            return typeof failres == "function" && failres(res)
-
-        },
-        complete() {
-        }
-    })
-}
 export function noaccess() {
     uni.showModal({
         title: '提示',
@@ -88,9 +60,10 @@ export function noaccess() {
 通用请求方法封装，高度完成
  */
 export function reqs(url, method, data, successres, failres) {
-    console.log( "[reqs] Request data : ", data)
+    console.log("[reqs] Request data : ", data)
     uni.showLoading({
-        title: '加载中',success: (res)=>{
+        title: '加载中',
+        success: (res) => {
             let token = uni.getStorageSync("token");
             uni.request({
                 url: rootUrl + url,
@@ -102,15 +75,15 @@ export function reqs(url, method, data, successres, failres) {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: (res) => {
-                    if (res.statusCode === 401) {
+                    if (res.statusCode === 401 && uni.getStorageSync("token")) {
                         uni.showToast({
                             title: '授权已过期，请尝试再次操作一下来自动授权。',
                             icon: 'none',
                             duration: 1500,
-                            complete: function(res){
-                                getSchoolToken('', uni.getStorageSync("userpass"),res=>{
-                                    uni.setStorageSync("token",res.data.data)
-                                },err=>{
+                            complete: function (res) {
+                                getSchoolToken('', uni.getStorageSync("userpass"), res => {
+                                    uni.setStorageSync("token", res.data.data)
+                                }, err => {
                                     uni.showToast({
                                         title: '授权服务器不可用，请联系管理员维修。',
                                         icon: 'none',
@@ -131,8 +104,7 @@ export function reqs(url, method, data, successres, failres) {
                         this.emptyType = "success"
                         this.emptyMsg = "未查询到信息"
                         return typeof successres == "function" && successres(res.data);
-                    }
-                    else {
+                    } else {
                         return typeof failres == "function" && failres(res.data)
                     }
 
@@ -157,36 +129,44 @@ export function reqs(url, method, data, successres, failres) {
 获取Jwt Token
  */
 export function getSchoolToken(postData, BasicAuth, successres, failres) {
+    uni.showLoading(
+    {
+        title: '签发Token中',
+            success: ()=>
+        {
+            uni.request({
+                url: authUrl + '/token',
+                method: 'POST',
+                header: {
+                    Authorization: "Basic " + BasicAuth,
+                    'X-Requested-With': "XMLHttpRequest"
+                },
+                data: {
+                    postData
+                },
+                success: res => {
+                    if (res) {
+                        if (res.data.code == 200) {
+                            return typeof successres == "function" && successres(res);
+                        } else {
+                            console.log("【SError】request.token : ", res)
+                            return typeof failres == "function" && failres(res)
+                        }
+                    }
 
-    uni.request({
-        url: authUrl + '/token',
-        method: 'POST',
-        header: {
-            Authorization: "Basic " + BasicAuth,
-            'X-Requested-With': "XMLHttpRequest"
-        },
-        data: {
-            postData
-        },
-        success: res => {
-            if (res) {
-                if (res.data.code == 200) {
-                    return typeof successres == "function" && successres(res);
-                } else {
-                    console.log("【SError】request.token : ", res)
+                },
+                fail: (res) => {
+                    console.log("【Error】request.token : ", res)
                     return typeof failres == "function" && failres(res)
+
+                },
+                complete() {
+                    uni.hideLoading();
                 }
-            }
-
-        },
-        fail: (res) => {
-            console.log("【Error】request.token : ", res)
-            return typeof failres == "function" && failres(res)
-
-        },
-        complete() {
+            })
         }
     })
+
 }
 
 export function uuid() {

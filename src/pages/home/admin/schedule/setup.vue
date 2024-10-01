@@ -241,11 +241,7 @@ export default {
             }
         },
         getZcd: function (index) {
-            if (this.courseItem.weeks.indexOf(index) != -1) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.courseItem.weeks.indexOf(index) != -1;
         },
         // 改变节次
         jcChange: function (e) {
